@@ -239,59 +239,48 @@ async function scrapeUniCredit(page) {
     await acceptCookies(page);
     await new Promise((r) => setTimeout(r, 3000));
 
-    // Debug: rate před kliknutím (ukazuje výchozí stav kalkulačky)
-    const defaultRate = await page.evaluate(() => {
-      const m = document.body.innerText.match(/(\d+[,.]\d{2})\s*%\s*p\.a/i);
-      return m ? m[0] : null;
+    // Najdi <select> pro "Doba fixace" a označkuj ho data atributem
+    const selectData = await page.evaluate(() => {
+      const selects = Array.from(document.querySelectorAll("select"));
+      for (const sel of selects) {
+        const opts = Array.from(sel.options);
+        if (opts.some((o) => /\d+\s*(let|rok[yu]?)/i.test(o.text.trim()))) {
+          sel.setAttribute("data-4fin-fix", "true");
+          return opts.map((o) => ({ value: o.value, text: o.text.trim() }));
+        }
+      }
+      return null;
     });
-    log(`  UniCredit default (bez kliknutí): ${defaultRate}`);
 
-    // UC nabízí pouze 2/3/5 let — žádné 7/10
+    if (!selectData) {
+      log("  UniCredit: fixační <select> nenalezen");
+      return null;
+    }
+    log(`  UniCredit options: ${JSON.stringify(selectData)}`);
+
+    // UC nabízí 2/3/5 let — žádné 7/10
     const fixations = [
-      { key: "fix_3", label: "3 roky" },
-      { key: "fix_5", label: "5 let" },
+      { key: "fix_3", texts: ["3 roky", "3 rok", "3 let"] },
+      { key: "fix_5", texts: ["5 let"] },
     ];
 
     const rates = {};
-    for (const { key, label } of fixations) {
-      const clicked = await page.evaluate((target) => {
-        const lo = target.toLowerCase();
-        const walk = (el) => {
-          const own = Array.from(el.childNodes)
-            .filter((n) => n.nodeType === 3)
-            .map((n) => n.textContent.trim())
-            .filter((t) => t.length > 0)
-            .join(" ");
-          if (own.toLowerCase() === lo) {
-            if (el.tagName === "OPTION" && el.parentElement) {
-              // select + dispatch change tak aby se kalkulačka překreslila
-              el.parentElement.value = el.value || el.textContent.trim();
-              el.parentElement.dispatchEvent(new Event("change", { bubbles: true }));
-              return { tag: "OPTION", val: el.value };
-            }
-            el.click();
-            return { tag: el.tagName, cls: (el.className || "").toString().slice(0, 60) };
-          }
-          for (const child of el.children) {
-            const r = walk(child);
-            if (r) return r;
-          }
-          return null;
-        };
-        return walk(document.body);
-      }, label);
-
-      if (!clicked) {
-        log(`  UniCredit: element pro "${label}" nenalezen`);
+    for (const { key, texts } of fixations) {
+      const opt = selectData.find((o) =>
+        texts.some((t) => o.text.toLowerCase() === t.toLowerCase())
+      );
+      if (!opt) {
+        log(`  UniCredit: option "${texts[0]}" nenalezena v ${JSON.stringify(selectData)}`);
         continue;
       }
-      log(`  UniCredit: kliknuto "${label}" (${clicked.tag} .${clicked.cls})`);
+
+      // page.select() spustí input+change eventy — funguje s Angularem/Reactem
+      await page.select('select[data-4fin-fix="true"]', opt.value);
+      log(`  UniCredit: vybráno "${opt.text}" (value="${opt.value}")`);
       await new Promise((r) => setTimeout(r, 1200));
 
-      // Sazba se zobrazí jako X,XX % — hledat vše od 3% do 9% (hypotéky)
       const rateText = await page.evaluate(() => {
         const text = document.body.innerText;
-        // Prefer "p.a." context, fallback to first matching XX,XX %
         const pa = text.match(/(\d+[,.]\d{2})\s*%\s*p\.a/i);
         if (pa) return pa[0];
         const generic = text.match(/[3-9][,.]\d{2}\s*%/);
@@ -299,12 +288,12 @@ async function scrapeUniCredit(page) {
       });
 
       rates[key] = parseRate(rateText);
-      log(`  UniCredit ${label}: ${rateText} → ${rates[key]}`);
+      log(`  UniCredit ${texts[0]}: ${rateText} → ${rates[key]}`);
     }
 
     if (!rates.fix_5) {
       const txt = await page.evaluate(() => document.body.innerText.slice(0, 1400));
-      log(`  UniCredit fix_5 chybí. Text stránky:\n${txt}`);
+      log(`  UniCredit fix_5 chybí. Text:\n${txt}`);
       return null;
     }
 
