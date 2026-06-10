@@ -294,13 +294,6 @@ async function scrapeUniCredit(page) {
         return all.length > 1 ? all[all.length - 1][0] : (all[0] ? all[0][0] : null);
       });
 
-      // Debug: dump textu po výběru, abychom ověřili reakci kalkulačky
-      const debugSnippet = await page.evaluate(() => {
-        const t = document.body.innerText;
-        const idx = t.toUpperCase().indexOf("NAŠE NABÍDKA");
-        return idx >= 0 ? t.slice(idx, idx + 400) : t.slice(600, 1000);
-      });
-      log(`  UniCredit NAŠE NABÍDKA snippet:\n${debugSnippet}`);
 
       rates[key] = parseRate(rateText);
       log(`  UniCredit ${texts[0]}: ${rateText} → ${rates[key]}`);
