@@ -95,25 +95,13 @@ async function scrapeRB(page) {
   const url = "https://www.rb.cz/osobni/hypoteky/hypoteka-na-bydleni";
   log(`Raiffeisenbank → ${url}`);
   try {
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
+    // Kalkulačka je v iframe — navigujeme přímo tam
+    const calcUrl = "https://hypoteka.rb.cz/embedded-calc?busProdSubTp=RML_CLAS";
+    log(`  → iframe kalkulačka: ${calcUrl}`);
+    await page.goto(calcUrl, { waitUntil: "networkidle2", timeout: 30_000 });
     await acceptCookies(page);
+    await new Promise((r) => setTimeout(r, 3000));
 
-    // Scroll dolů — spustí lazy loading kalkulačky
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await new Promise((r) => setTimeout(r, 4000));
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await new Promise((r) => setTimeout(r, 2000));
-
-    // Zkontroluj iframes
-    const frames = page.frames();
-    log(`  DEBUG frames count: ${frames.length}`);
-    for (const frame of frames) {
-      if (frame.url() !== url && frame.url() !== "about:blank") {
-        log(`  DEBUG iframe: ${frame.url()}`);
-      }
-    }
-
-    // Debug — najdi tlačítka a rate elementy
     const debug = await page.evaluate(() => {
       const allBtns = Array.from(document.querySelectorAll("button, [role='tab'], [role='radio'], label, [class*='fix'], [class*='period'], [class*='tenor'], [class*='duration'], [class*='splatnost'], [class*='fixac']"))
         .filter((el) => /\d/.test(el.textContent))
@@ -128,14 +116,14 @@ async function scrapeRB(page) {
         .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim().slice(0, 50) }))
         .slice(0, 15);
 
-      return { allBtns, rateEls, body: document.body.innerText.slice(500, 1800) };
+      return { allBtns, rateEls, body: document.body.innerText.slice(0, 1500) };
     });
 
     log(`  DEBUG buttons: ${JSON.stringify(debug.allBtns, null, 2)}`);
     log(`  DEBUG rate els: ${JSON.stringify(debug.rateEls, null, 2)}`);
-    log(`  DEBUG body (500-1800):\n${debug.body}`);
+    log(`  DEBUG body:\n${debug.body}`);
 
-    return null; // zapneme až budeme znát selektory
+    return null;
   } catch (err) {
     log(`  → error: ${err.message}`);
     return null;
