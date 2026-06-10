@@ -69,17 +69,7 @@ const BANKS = [
       fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
     },
   },
-  {
-    bank: "Raiffeisenbank",
-    url: "https://www.rb.cz/osobni/hypoteky/hypoteka-na-bydleni",
-    wait: 5000,
-    patterns: {
-      fix_3: /3\s*rok[yu]?[\s\S]{0,200}?(\d+[,.]\d{2})\s*%/i,
-      fix_5: /5\s*let[\s\S]{0,200}?(\d+[,.]\d{2})\s*%/i,
-      fix_7: /7\s*let[\s\S]{0,200}?(\d+[,.]\d{2})\s*%/i,
-      fix_10: /10\s*let[\s\S]{0,200}?(\d+[,.]\d{2})\s*%/i,
-    },
-  },
+  // Raiffeisenbank handled by scrapeRB() below
   {
     // KB nabízí fixace 1-5 let; fix_7 a fix_10 se dosadí z fix_5
     bank: "Komerční banka",
@@ -96,6 +86,47 @@ const BANKS = [
 // ---------------------------------------------------------------------------
 // Generic bank scraper
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Raiffeisenbank — klikni na každé tlačítko fixace, přečti sazbu
+// ---------------------------------------------------------------------------
+
+async function scrapeRB(page) {
+  const url = "https://www.rb.cz/osobni/hypoteky/hypoteka-na-bydleni";
+  log(`Raiffeisenbank → ${url}`);
+  try {
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
+    await acceptCookies(page);
+    await new Promise((r) => setTimeout(r, 3000));
+
+    // Debug — najdi tlačítka fixace a elementy se sazbami
+    const debug = await page.evaluate(() => {
+      const allBtns = Array.from(document.querySelectorAll("button, [role='tab'], [role='radio'], label, [class*='fix'], [class*='period'], [class*='tenor'], [class*='duration']"))
+        .filter((el) => /\d/.test(el.textContent))
+        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim().slice(0, 50) }))
+        .slice(0, 25);
+
+      const rateEls = Array.from(document.querySelectorAll("*"))
+        .filter((el) => {
+          const t = el.childElementCount === 0 ? el.textContent.trim() : "";
+          return /^\d+[,.]\d{2}\s*%/.test(t);
+        })
+        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim().slice(0, 50) }))
+        .slice(0, 15);
+
+      return { allBtns, rateEls, body: document.body.innerText.slice(0, 1000) };
+    });
+
+    log(`  DEBUG buttons: ${JSON.stringify(debug.allBtns, null, 2)}`);
+    log(`  DEBUG rate els: ${JSON.stringify(debug.rateEls, null, 2)}`);
+    log(`  DEBUG body:\n${debug.body}`);
+
+    return null; // zapneme až budeme znát selektory
+  } catch (err) {
+    log(`  → error: ${err.message}`);
+    return null;
+  }
+}
 
 async function acceptCookies(page) {
   try {
@@ -226,6 +257,9 @@ async function main() {
       const entry = await scrapeBank(page, config);
       if (entry) results.push(entry);
     }
+
+    const rb = await scrapeRB(page);
+    if (rb) results.push(rb);
 
     log(`\nScraped ${results.length}/${BANKS.length} banks successfully.`);
     await saveRates(results);
