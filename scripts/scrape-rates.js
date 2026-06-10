@@ -82,8 +82,8 @@ async function scrapeHypoindex(page) {
     log(`Hypoindex → ${url}`);
     try {
       await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
-      // Give JS a bit more time to render tables
-      await new Promise((r) => setTimeout(r, 2000));
+      // Give JS extra time to render dynamic content
+      await new Promise((r) => setTimeout(r, 4000));
 
       const result = await page.evaluate((bankMap) => {
         const rates = [];
@@ -154,10 +154,27 @@ async function scrapeHypoindex(page) {
         }));
         if (divRates.length > 0) return { rates: divRates, strategy: "divs" };
 
-        return { rates: [], strategy: "none" };
+        // Debug: dump what elements/tables exist on the page
+        const debug = {
+          tables: document.querySelectorAll("table").length,
+          tableHeaders: Array.from(document.querySelectorAll("th")).map((th) => th.textContent.trim()).slice(0, 20),
+          rateClasses: [...new Set(
+            Array.from(document.querySelectorAll("*"))
+              .filter((el) => /rate|sazb|bank|hypot/i.test(el.className))
+              .map((el) => el.tagName + "." + el.className.trim().split(/\s+/)[0])
+          )].slice(0, 20),
+          bodyText: document.body.innerText.slice(0, 800),
+        };
+        return { rates: [], strategy: "none", debug };
       }, BANK_MAP);
 
       log(`  → strategy: ${result.strategy}, rows: ${result.rates.length}`);
+      if (result.strategy === "none" && result.debug) {
+        log(`  DEBUG tables: ${result.debug.tables}`);
+        log(`  DEBUG th texts: ${JSON.stringify(result.debug.tableHeaders)}`);
+        log(`  DEBUG rate classes: ${JSON.stringify(result.debug.rateClasses)}`);
+        log(`  DEBUG body snippet:\n${result.debug.bodyText}`);
+      }
 
       const parsed = [];
       for (const row of result.rates) {
@@ -291,12 +308,18 @@ async function saveRates(rates) {
   }));
 
   log(`Saving ${rows.length} banks to Supabase...`);
-  const { error } = await supabase
-    .from("rates")
-    .upsert(rows, { onConflict: "bank" });
 
-  if (error) {
-    console.error("Supabase upsert error:", error.message);
+  // Delete existing rows for banks we're about to write, then insert
+  const banks = rows.map((r) => r.bank);
+  const { error: delError } = await supabase.from("rates").delete().in("bank", banks);
+  if (delError) {
+    console.error("Supabase delete error:", delError.message);
+    process.exit(1);
+  }
+
+  const { error: insError } = await supabase.from("rates").insert(rows);
+  if (insError) {
+    console.error("Supabase insert error:", insError.message);
     process.exit(1);
   }
 
