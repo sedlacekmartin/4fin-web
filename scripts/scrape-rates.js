@@ -239,6 +239,13 @@ async function scrapeUniCredit(page) {
     await acceptCookies(page);
     await new Promise((r) => setTimeout(r, 3000));
 
+    // Debug: rate před kliknutím (ukazuje výchozí stav kalkulačky)
+    const defaultRate = await page.evaluate(() => {
+      const m = document.body.innerText.match(/(\d+[,.]\d{2})\s*%\s*p\.a/i);
+      return m ? m[0] : null;
+    });
+    log(`  UniCredit default (bez kliknutí): ${defaultRate}`);
+
     // UC nabízí pouze 2/3/5 let — žádné 7/10
     const fixations = [
       { key: "fix_3", label: "3 roky" },
