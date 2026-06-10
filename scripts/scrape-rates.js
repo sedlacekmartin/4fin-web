@@ -50,11 +50,12 @@ const BANKS = [
   {
     bank: "ČSOB / Hyp. banka",
     url: "https://www.csob.cz/lide/bydleni/hypoteka",
+    wait: 5000, // kalkulačka se renderuje pomaleji
     patterns: {
-      fix_3: /3\s*rok[yu]?[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
-      fix_5: /5\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
-      fix_7: /7\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
-      fix_10: /10\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
+      fix_3: /3\s*rok[yu]?[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
     },
   },
   {
@@ -78,7 +79,7 @@ async function scrapeBank(page, config) {
   log(`${config.bank} → ${config.url}`);
   try {
     await page.goto(config.url, { waitUntil: "networkidle2", timeout: 30_000 });
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, config.wait ?? 2000));
 
     const text = await page.evaluate(() => document.body.innerText);
 
