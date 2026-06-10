@@ -57,6 +57,17 @@ const BANKS = [
       fix_10: /10\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
     },
   },
+  {
+    // KB nabízí fixace 1-5 let; fix_7 a fix_10 se dosadí z fix_5
+    bank: "Komerční banka",
+    url: "https://www.kb.cz/cs/obcane/pujcky/hypoteky/hypoteka",
+    patterns: {
+      fix_3: /3\s*(?:rok[yu]?|let[a-z]*)[\s\S]{0,50}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,50}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: null,
+      fix_10: null,
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -74,6 +85,7 @@ async function scrapeBank(page, config) {
     // Serialize patterns to strings for transfer into browser context
     const results = {};
     for (const [key, regex] of Object.entries(config.patterns)) {
+      if (!regex) { results[key] = null; continue; }
       const m = text.match(regex);
       results[key] = m ? m[1] : null;
     }
