@@ -256,6 +256,12 @@ async function scrapeUniCredit(page) {
             .filter((t) => t.length > 0)
             .join(" ");
           if (own.toLowerCase() === lo) {
+            if (el.tagName === "OPTION" && el.parentElement) {
+              // select + dispatch change tak aby se kalkulačka překreslila
+              el.parentElement.value = el.value || el.textContent.trim();
+              el.parentElement.dispatchEvent(new Event("change", { bubbles: true }));
+              return { tag: "OPTION", val: el.value };
+            }
             el.click();
             return { tag: el.tagName, cls: (el.className || "").toString().slice(0, 60) };
           }
