@@ -3,6 +3,20 @@
 import { useState, useEffect } from "react";
 import { FALLBACK_RATES, BANK_COLORS, type Rate } from "@/lib/rates";
 
+function Tip({ label, tip }: { label: string; tip: string }) {
+  return (
+    <span className="relative group/tip inline-block">
+      <span className="border-b border-dashed border-[#697586] cursor-help text-[#0D1117] font-medium">
+        {label}
+      </span>
+      <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 rounded-[9px] bg-[#0D1117] text-white text-[0.73rem] leading-snug px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 shadow-xl">
+        {tip}
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#0D1117]" />
+      </span>
+    </span>
+  );
+}
+
 const COLS = [
   { key: "fix_3" as const, label: "Fix 3 roky", hide: "hidden md:block" },
   { key: "fix_5" as const, label: "Fix 5 let", hide: "" },
@@ -121,9 +135,38 @@ export default function RatesDashboard() {
           )}
         </div>
 
-        <p className="text-[#697586] text-[0.82rem] mt-4">
-          Sazby jsou orientační a mění se denně. Konkrétní nabídku získáte na bezplatné konzultaci.
-        </p>
+        <div className="mt-5 rounded-[12px] border border-[#E6E8EC] bg-[#F6F7F9] px-5 py-4 text-[0.82rem] text-[#3A424E] leading-relaxed">
+          <span className="font-semibold text-[#0D1117]">Výsledná sazba a výše splátky závisí na mnoha věcech</span>
+          {" — konkrétně na "}
+          <Tip label="LTV" tip="Kolik procent z hodnoty nemovitosti si půjčujete. Čím méně, tím lepší sazba — banka podstupuje nižší riziko." />
+          {", "}
+          <Tip label="výši a stabilitě příjmů" tip="Zaměstnanec na HPP dostane lepší podmínky než OSVČ. Záleží i na délce pracovního poměru a oboru." />
+          {", "}
+          <Tip label="DTI" tip="Celkový dluh (hypotéka + všechny ostatní úvěry) nesmí přesáhnout 8,5× váš roční čistý příjem." />
+          {", "}
+          <Tip label="DSTI" tip="Součet všech měsíčních splátek nesmí překročit 45 % vašeho čistého měsíčního příjmu." />
+          {", "}
+          <Tip label="délce a účelu úvěru" tip="Koupě bytu, výstavba, refinancování nebo rekonstrukce — každý účel má jiná pravidla. Delší splatnost = nižší splátka, ale více zaplatíte celkem." />
+          {", "}
+          <Tip label="typu a stavu nemovitosti" tip="Byt vs. dům, novostavba vs. starší, rekreační vs. trvalé bydlení — banka hodnotí každý typ jinak." />
+          {", "}
+          <Tip label="odhadní ceně" tip="Banka si nechá nemovitost nezávisle ocenit. Výsledná cena může být nižší než kupní — to ovlivní výši úvěru." />
+          {", "}
+          <Tip label="věku žadatele" tip="Součet vašeho věku a délky splatnosti zpravidla nesmí přesáhnout 70 let." />
+          {", "}
+          <Tip label="počtu žadatelů" tip="Dva žadatelé = vyšší společný příjem = lepší podmínky. Partneři nebo rodiče jako spolužadatelé jsou běžné." />
+          {", "}
+          <Tip label="pojištění" tip="Sjednání pojištění nemovitosti a schopnosti splácet (PPI) může zlepšit nabízenou sazbu." />
+          {" nebo "}
+          <Tip label="úvěrové historii" tip="Záznamy v bankovním registru o splácení předchozích úvěrů. Jeden výpadek splátky může zdražit hypotéku nebo ji zablokovat." />
+          {". Přesnou nabídku sestavíme individuálně — "}
+          <a
+            href="#kontakt"
+            className="font-semibold text-[#D6006C] border-b border-dashed border-[#D6006C] hover:opacity-75"
+          >
+            na bezplatné konzultaci →
+          </a>
+        </div>
       </div>
     </section>
   );
