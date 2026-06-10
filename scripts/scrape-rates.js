@@ -69,6 +69,17 @@ const BANKS = [
       fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
     },
   },
+  {
+    bank: "mBank",
+    url: "https://www.mbank.cz/osobni/hypoteky/hypoteka-na-bydleni/",
+    wait: 3000,
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
   // Raiffeisenbank handled by scrapeRB() below
   {
     // KB nabízí fixace 1-5 let; fix_7 a fix_10 se dosadí z fix_5
@@ -391,7 +402,7 @@ async function main() {
     const uc = await scrapeUniCredit(page);
     if (uc) results.push(uc);
 
-    log(`\nScraped ${results.length}/${BANKS.length + 2} banks successfully.`);
+    log(`\nScraped ${results.length}/${BANKS.length + 2} banks successfully.`); // +2 = RB + UC
     await saveRates(results);
   } finally {
     await browser.close();
