@@ -102,25 +102,36 @@ async function scrapeRB(page) {
     await acceptCookies(page);
     await new Promise((r) => setTimeout(r, 3000));
 
+    // Klikni na první "Změnit" link (u Fixace)
+    const zmenitClicked = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll("a, button, span, div"))
+        .filter((el) => el.textContent.trim() === "Změnit");
+      // Klikni na poslední "Změnit" — ten u Fixace (první je u typu úvěru)
+      if (links.length >= 2) { links[links.length - 1].click(); return links.length; }
+      if (links.length === 1) { links[0].click(); return 1; }
+      return 0;
+    });
+    log(`  DEBUG Změnit clicks: ${zmenitClicked}`);
+    await new Promise((r) => setTimeout(r, 1500));
+
+    // Po kliknutí — dump všech interaktivních elementů
     const debug = await page.evaluate(() => {
-      const allBtns = Array.from(document.querySelectorAll("button, [role='tab'], [role='radio'], label, [class*='fix'], [class*='period'], [class*='tenor'], [class*='duration'], [class*='splatnost'], [class*='fixac']"))
-        .filter((el) => /\d/.test(el.textContent))
-        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim().slice(0, 50) }))
-        .slice(0, 25);
-
-      const rateEls = Array.from(document.querySelectorAll("*"))
+      const interactive = Array.from(document.querySelectorAll("button, a, [role='tab'], [role='radio'], [role='option'], li, label, span, div"))
         .filter((el) => {
-          const t = el.childElementCount === 0 ? el.textContent.trim() : "";
-          return /^\d+[,.]\d{2}\s*%/.test(t);
+          const t = el.textContent.trim();
+          return el.childElementCount === 0 && t.length > 0 && t.length < 40 && /\d/.test(t);
         })
-        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim().slice(0, 50) }))
-        .slice(0, 15);
+        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim() }))
+        .slice(0, 30);
 
-      return { allBtns, rateEls, body: document.body.innerText.slice(0, 1500) };
+      const selects = Array.from(document.querySelectorAll("select"))
+        .map((el) => ({ name: el.name, options: Array.from(el.options).map((o) => o.text) }));
+
+      return { interactive, selects, body: document.body.innerText.slice(0, 2000) };
     });
 
-    log(`  DEBUG buttons: ${JSON.stringify(debug.allBtns, null, 2)}`);
-    log(`  DEBUG rate els: ${JSON.stringify(debug.rateEls, null, 2)}`);
+    log(`  DEBUG interactive: ${JSON.stringify(debug.interactive, null, 2)}`);
+    log(`  DEBUG selects: ${JSON.stringify(debug.selects)}`);
     log(`  DEBUG body:\n${debug.body}`);
 
     return null;
