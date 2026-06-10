@@ -36,7 +36,6 @@ function parseRate(str) {
 // ---------------------------------------------------------------------------
 
 // Banks with working regex-based scrapers
-// Add more here as URLs/selectors are confirmed
 const BANKS = [
   {
     bank: "Air Bank",
@@ -48,51 +47,17 @@ const BANKS = [
       fix_10: /10\s*let[\s\S]{0,80}?(\d+[,.]\d{2})\s*%/i,
     },
   },
+  {
+    bank: "ČSOB / Hyp. banka",
+    url: "https://www.csob.cz/lide/bydleni/hypoteka",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,30}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
 ];
-
-// ---------------------------------------------------------------------------
-// ČSOB — JavaScript calculator, click each fixation tab and read rate
-// ---------------------------------------------------------------------------
-
-async function scrapeCSOB(page) {
-  const url = "https://www.csob.cz/lide/bydleni/hypoteka";
-  log(`ČSOB / Hyp. banka → ${url}`);
-  try {
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
-    await new Promise((r) => setTimeout(r, 3000));
-
-    // Accept cookies if present
-    const cookieBtn = await page.$("button[id*='accept'], button[class*='accept'], button[class*='souhlas'], [data-accept], button::-p-text(Souhlasím), button::-p-text(Přijmout)");
-    if (cookieBtn) {
-      await cookieBtn.click();
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-
-    // Debug — dump page structure to find calculator elements
-    const debug = await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll("button, [role='tab'], [class*='fix'], [class*='period'], [class*='fixac']"))
-        .map((el) => ({ tag: el.tagName, cls: el.className, txt: el.textContent.trim().slice(0, 40) }))
-        .filter((el) => /\d/.test(el.txt))
-        .slice(0, 20);
-      const rateEls = Array.from(document.querySelectorAll("*"))
-        .filter((el) => {
-          const t = el.childElementCount === 0 ? el.textContent.trim() : "";
-          return /^\d+[,.]\d{2}\s*%/.test(t) || /sazb/i.test(el.className);
-        })
-        .map((el) => ({ tag: el.tagName, cls: el.className.slice(0, 60), txt: el.textContent.trim().slice(0, 40) }))
-        .slice(0, 20);
-      return { buttons, rateEls, bodySnippet: document.body.innerText.slice(0, 800) };
-    });
-
-    log(`  DEBUG buttons: ${JSON.stringify(debug.buttons)}`);
-    log(`  DEBUG rate elements: ${JSON.stringify(debug.rateEls)}`);
-    log(`  DEBUG body:\n${debug.bodySnippet}`);
-    return null; // Will be enabled once selectors are known
-  } catch (err) {
-    log(`  → error: ${err.message}`);
-    return null;
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Generic bank scraper
@@ -201,15 +166,10 @@ async function main() {
   const results = [];
 
   try {
-    // Air Bank — generic regex scraper
     for (const config of BANKS) {
       const entry = await scrapeBank(page, config);
       if (entry) results.push(entry);
     }
-
-    // ČSOB — custom calculator scraper
-    const csob = await scrapeCSOB(page);
-    if (csob) results.push(csob);
 
     log(`\nScraped ${results.length}/${BANKS.length} banks successfully.`);
     await saveRates(results);
