@@ -70,6 +70,17 @@ const BANKS = [
     },
   },
   {
+    bank: "Moneta",
+    url: "https://www.moneta.cz/hypoteky/hypoteka",
+    wait: 3000,
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
     bank: "mBank",
     url: "https://www.mbank.cz/osobni/hypoteky/hypoteka-na-bydleni/",
     wait: 3000,
