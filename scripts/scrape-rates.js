@@ -70,17 +70,6 @@ const BANKS = [
     },
   },
   {
-    bank: "Moneta",
-    url: "https://www.moneta.cz/hypoteky/hypoteka",
-    wait: 3000,
-    patterns: {
-      fix_3: /3\s*rok[yu]?[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
-      fix_5: /5\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
-      fix_7: /7\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
-      fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
-    },
-  },
-  {
     bank: "mBank",
     url: "https://www.mbank.cz/osobni/hypoteky/hypoteka-na-bydleni/",
     wait: 3000,
@@ -108,6 +97,56 @@ const BANKS = [
 // ---------------------------------------------------------------------------
 // Generic bank scraper
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Moneta — sazby jsou přímo na stránce, ale regex musí být omezený
+// na sekci "Fixace úrokové sazby" aby nechytil "5 let" v jiném kontextu
+// ---------------------------------------------------------------------------
+
+async function scrapeMoneta(page) {
+  const url = "https://www.moneta.cz/hypoteky/hypoteka";
+  log(`Moneta → ${url}`);
+  try {
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
+    await acceptCookies(page);
+    await new Promise((r) => setTimeout(r, 3000));
+
+    const text = await page.evaluate(() => document.body.innerText);
+
+    // Najdi sekci "Fixace ... sazby" a hledej pouze tam (cca 250 znaků)
+    const idx = text.search(/fixace[\s\S]{0,20}?sazby/i);
+    if (idx < 0) {
+      log(`  Moneta: sekce "Fixace úrokové sazby" nenalezena`);
+      log(`  Snippet:\n${text.slice(0, 800)}`);
+      return null;
+    }
+
+    const section = text.slice(idx, idx + 250);
+
+    const fix_3  = parseRate((section.match(/3\s*rok[yu]?[\s\S]{0,40}?(\d+[,.]\d{2})\s*%/i)  || [])[1]);
+    const fix_5  = parseRate((section.match(/5\s*let[\s\S]{0,40}?(\d+[,.]\d{2})\s*%/i)         || [])[1]);
+    const fix_7  = parseRate((section.match(/7\s*let[\s\S]{0,40}?(\d+[,.]\d{2})\s*%/i)         || [])[1]);
+    const fix_10 = parseRate((section.match(/10\s*let[\s\S]{0,40}?(\d+[,.]\d{2})\s*%/i)        || [])[1]);
+
+    if (!fix_5) {
+      log(`  Moneta: fix_5 nenalezeno. Sekce:\n${section}`);
+      return null;
+    }
+
+    const entry = {
+      bank: "Moneta",
+      fix_3: fix_3 ?? fix_5,
+      fix_5,
+      fix_7:  fix_7  ?? fix_5,
+      fix_10: fix_10 ?? fix_5,
+    };
+    log(`  → ${JSON.stringify(entry)}`);
+    return entry;
+  } catch (err) {
+    log(`  Moneta → error: ${err.message}`);
+    return null;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Raiffeisenbank — klikni na každé tlačítko fixace, přečti sazbu
@@ -407,13 +446,16 @@ async function main() {
       if (entry) results.push(entry);
     }
 
+    const moneta = await scrapeMoneta(page);
+    if (moneta) results.push(moneta);
+
     const rb = await scrapeRB(page);
     if (rb) results.push(rb);
 
     const uc = await scrapeUniCredit(page);
     if (uc) results.push(uc);
 
-    log(`\nScraped ${results.length}/${BANKS.length + 2} banks successfully.`); // +2 = RB + UC
+    log(`\nScraped ${results.length}/${BANKS.length + 3} banks successfully.`); // +3 = Moneta + RB + UC
     await saveRates(results);
   } finally {
     await browser.close();
