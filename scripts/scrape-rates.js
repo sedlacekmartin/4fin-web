@@ -59,6 +59,17 @@ const BANKS = [
     },
   },
   {
+    bank: "Česká spořitelna",
+    url: "https://www.csas.cz/cs/osobni-finance/hypoteky/hypoteka",
+    wait: 5000,
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,150}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
     // KB nabízí fixace 1-5 let; fix_7 a fix_10 se dosadí z fix_5
     bank: "Komerční banka",
     url: "https://www.kb.cz/cs/obcane/pujcky/hypoteky/hypoteka",
@@ -75,10 +86,31 @@ const BANKS = [
 // Generic bank scraper
 // ---------------------------------------------------------------------------
 
+async function acceptCookies(page) {
+  try {
+    const clicked = await page.evaluate(() => {
+      const keywords = ["souhlasím a pokračovat", "přijmout vše", "accept all", "povolit vše", "souhlasím", "přijmout cookies"];
+      const btns = Array.from(document.querySelectorAll("button, a[role='button']"));
+      for (const btn of btns) {
+        if (keywords.some((k) => btn.textContent.trim().toLowerCase().startsWith(k))) {
+          btn.click();
+          return btn.textContent.trim();
+        }
+      }
+      return null;
+    });
+    if (clicked) {
+      log(`  Cookie consent: kliknuto "${clicked}"`);
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  } catch {}
+}
+
 async function scrapeBank(page, config) {
   log(`${config.bank} → ${config.url}`);
   try {
     await page.goto(config.url, { waitUntil: "networkidle2", timeout: 30_000 });
+    await acceptCookies(page);
     await new Promise((r) => setTimeout(r, config.wait ?? 2000));
 
     const text = await page.evaluate(() => document.body.innerText);
