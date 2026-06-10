@@ -24,13 +24,10 @@ jobs:
         working-directory: scripts
         run: npm ci
 
-      - name: Install Chromium
-        working-directory: scripts
-        run: npx puppeteer browsers install chrome
-
       - name: Run rate scraper
         working-directory: scripts
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome-stable
         run: node scrape-rates.js
