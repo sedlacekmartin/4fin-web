@@ -227,6 +227,140 @@ async function scrapeBank(page, config) {
 }
 
 // ---------------------------------------------------------------------------
+// UniCredit — klikni na každou fixaci, přečti sazbu
+// ---------------------------------------------------------------------------
+
+async function scrapeUniCredit(page) {
+  const url =
+    "https://www.unicreditbank.cz/cs/obcane/hypoteky/hypoteka-nove-penize.html";
+  log(`UniCredit Bank → ${url}`);
+  try {
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
+    await acceptCookies(page);
+    await new Promise((r) => setTimeout(r, 3000));
+
+    // Debug: dump DOM info to find fixation buttons
+    const domInfo = await page.evaluate(() => {
+      const info = [];
+
+      // Collect all buttons and links with "let"/"rok" in text
+      const candidates = Array.from(
+        document.querySelectorAll(
+          "button, a, [role='tab'], [role='button'], li, label, input[type='radio']"
+        )
+      );
+      for (const el of candidates) {
+        const t = el.textContent.trim();
+        if (/\d+\s*(let|rok[yu]?)/i.test(t) && t.length < 30) {
+          info.push({
+            tag: el.tagName,
+            text: t,
+            cls: el.className,
+            role: el.getAttribute("role"),
+            id: el.id,
+          });
+        }
+      }
+
+      // Also dump first 800 chars of innerText
+      return {
+        buttons: info.slice(0, 20),
+        text: document.body.innerText.slice(0, 800),
+      };
+    });
+
+    log(
+      `  UniCredit DOM candidates:\n${JSON.stringify(domInfo.buttons, null, 2)}`
+    );
+    log(`  UniCredit text snippet:\n${domInfo.text}`);
+
+    // Fixace: zkusíme kliknout na tlačítko/tab podle textu
+    const fixations = [
+      { key: "fix_3", labels: ["3 roky", "3 rok", "3 let"] },
+      { key: "fix_5", labels: ["5 let"] },
+      { key: "fix_7", labels: ["7 let"] },
+      { key: "fix_10", labels: ["10 let"] },
+    ];
+
+    const rates = {};
+    for (const { key, labels } of fixations) {
+      const clicked = await page.evaluate((targetLabels) => {
+        const els = Array.from(
+          document.querySelectorAll(
+            "button, a, [role='tab'], [role='button'], li, label"
+          )
+        );
+        for (const label of targetLabels) {
+          const el = els.find(
+            (e) =>
+              e.textContent.trim().toLowerCase() === label.toLowerCase() ||
+              e.textContent.trim().toLowerCase().startsWith(label.toLowerCase())
+          );
+          if (el) {
+            el.click();
+            return el.textContent.trim();
+          }
+        }
+        return null;
+      }, labels);
+
+      if (!clicked) {
+        log(`  UniCredit: žádný element pro ${labels[0]} nenalezen`);
+        continue;
+      }
+
+      log(`  UniCredit: kliknuto "${clicked}"`);
+      await new Promise((r) => setTimeout(r, 1000));
+
+      // Přečti sazbu — zkusit různé selektory
+      const rateText = await page.evaluate(() => {
+        // Hledáme číslo ve formátu X,XX % nebo X.XX %
+        const selectors = [
+          "[class*='rate']",
+          "[class*='sazb']",
+          "[class*='interest']",
+          "[class*='urok']",
+          "[class*='result']",
+          "[class*='value']",
+          "[class*='percent']",
+        ];
+
+        for (const sel of selectors) {
+          const els = Array.from(document.querySelectorAll(sel));
+          for (const el of els) {
+            const t = el.textContent.trim();
+            if (/^\d+[,.]\d{2}\s*%/.test(t)) return t;
+          }
+        }
+
+        // Fallback: regex na celý text
+        const m = document.body.innerText.match(/(\d+[,.]\d{2})\s*%\s*p\.a/i);
+        return m ? m[0] : null;
+      });
+
+      rates[key] = parseRate(rateText);
+      log(`  UniCredit ${labels[0]}: ${rateText} → ${rates[key]}`);
+    }
+
+    if (!rates.fix_5) {
+      log("  UniCredit: fix_5 se nepodařilo extrahovat");
+      return null;
+    }
+
+    return {
+      bank: "UniCredit Bank",
+      fix_3: rates.fix_3 ?? rates.fix_5,
+      fix_5: rates.fix_5,
+      fix_7: rates.fix_7 ?? rates.fix_5,
+      fix_10: rates.fix_10 ?? rates.fix_5,
+    };
+  } catch (err) {
+    log(`  UniCredit → error: ${err.message}`);
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Save to Supabase — delete existing rows for these banks, then insert
 // ---------------------------------------------------------------------------
 
@@ -296,7 +430,10 @@ async function main() {
     const rb = await scrapeRB(page);
     if (rb) results.push(rb);
 
-    log(`\nScraped ${results.length}/${BANKS.length} banks successfully.`);
+    const uc = await scrapeUniCredit(page);
+    if (uc) results.push(uc);
+
+    log(`\nScraped ${results.length}/${BANKS.length + 2} banks successfully.`);
     await saveRates(results);
   } finally {
     await browser.close();
