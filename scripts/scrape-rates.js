@@ -277,15 +277,30 @@ async function scrapeUniCredit(page) {
       // page.select() spustí input+change eventy — funguje s Angularem/Reactem
       await page.select('select[data-4fin-fix="true"]', opt.value);
       log(`  UniCredit: vybráno "${opt.text}" (value="${opt.value}")`);
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, 2000));
 
+      // Sazba je pod sekcí "NAŠE NABÍDKA", ne v promo textu záhlaví
       const rateText = await page.evaluate(() => {
         const text = document.body.innerText;
-        const pa = text.match(/(\d+[,.]\d{2})\s*%\s*p\.a/i);
-        if (pa) return pa[0];
-        const generic = text.match(/[3-9][,.]\d{2}\s*%/);
-        return generic ? generic[0] : null;
+        const idx = text.toUpperCase().indexOf("NAŠE NABÍDKA");
+        if (idx >= 0) {
+          const section = text.slice(idx, idx + 800);
+          // Hledat "X,XX %" v sekci výsledků
+          const m = section.match(/(\d+[,.]\d{2})\s*%/);
+          if (m) return m[0];
+        }
+        // Fallback: všechny výskyty "p.a." — vzít poslední (ne promo v záhlaví)
+        const all = [...text.matchAll(/(\d+[,.]\d{2})\s*%\s*p\.a/gi)];
+        return all.length > 1 ? all[all.length - 1][0] : (all[0] ? all[0][0] : null);
       });
+
+      // Debug: dump textu po výběru, abychom ověřili reakci kalkulačky
+      const debugSnippet = await page.evaluate(() => {
+        const t = document.body.innerText;
+        const idx = t.toUpperCase().indexOf("NAŠE NABÍDKA");
+        return idx >= 0 ? t.slice(idx, idx + 400) : t.slice(600, 1000);
+      });
+      log(`  UniCredit NAŠE NABÍDKA snippet:\n${debugSnippet}`);
 
       rates[key] = parseRate(rateText);
       log(`  UniCredit ${texts[0]}: ${rateText} → ${rates[key]}`);
