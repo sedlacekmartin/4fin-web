@@ -102,39 +102,61 @@ async function scrapeRB(page) {
     await acceptCookies(page);
     await new Promise((r) => setTimeout(r, 3000));
 
-    // Klikni na první "Změnit" link (u Fixace)
-    const zmenitClicked = await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll("a, button, span, div"))
-        .filter((el) => el.textContent.trim() === "Změnit");
-      // Klikni na poslední "Změnit" — ten u Fixace (první je u typu úvěru)
-      if (links.length >= 2) { links[links.length - 1].click(); return links.length; }
-      if (links.length === 1) { links[0].click(); return 1; }
-      return 0;
-    });
-    log(`  DEBUG Změnit clicks: ${zmenitClicked}`);
-    await new Promise((r) => setTimeout(r, 1500));
+    // MUI Select pro fixaci — kliknout, vybrat option, přečíst sazbu
+    const fixations = [
+      { key: "fix_3", label: "3 roky" },
+      { key: "fix_5", label: "5 let" },
+      { key: "fix_7", label: "7 let" },
+      { key: "fix_10", label: "10 let" },
+    ];
 
-    // Po kliknutí — dump všech interaktivních elementů
-    const debug = await page.evaluate(() => {
-      const interactive = Array.from(document.querySelectorAll("button, a, [role='tab'], [role='radio'], [role='option'], li, label, span, div"))
-        .filter((el) => {
-          const t = el.textContent.trim();
-          return el.childElementCount === 0 && t.length > 0 && t.length < 40 && /\d/.test(t);
-        })
-        .map((el) => ({ tag: el.tagName, cls: el.className.trim().slice(0, 80), txt: el.textContent.trim() }))
-        .slice(0, 30);
+    const rates = {};
+    for (const { key, label } of fixations) {
+      // Otevři MUI dropdown
+      await page.click("div.MuiSelect-select");
+      await new Promise((r) => setTimeout(r, 600));
 
-      const selects = Array.from(document.querySelectorAll("select"))
-        .map((el) => ({ name: el.name, options: Array.from(el.options).map((o) => o.text) }));
+      // Klikni na správnou option v dropdown listu
+      const clicked = await page.evaluate((target) => {
+        const opts = Array.from(document.querySelectorAll("li[role='option']"));
+        const opt = opts.find((el) => el.textContent.trim() === target);
+        if (opt) { opt.click(); return true; }
+        // fallback: hledej v celém dokumentu
+        const all = Array.from(document.querySelectorAll("li, [role='option']"));
+        const found = all.find((el) => el.textContent.trim() === target);
+        if (found) { found.click(); return true; }
+        return false;
+      }, label);
 
-      return { interactive, selects, body: document.body.innerText.slice(0, 2000) };
-    });
+      if (!clicked) {
+        log(`  RB: option "${label}" nenalezena`);
+        continue;
+      }
 
-    log(`  DEBUG interactive: ${JSON.stringify(debug.interactive, null, 2)}`);
-    log(`  DEBUG selects: ${JSON.stringify(debug.selects)}`);
-    log(`  DEBUG body:\n${debug.body}`);
+      await new Promise((r) => setTimeout(r, 700));
 
-    return null;
+      // Přečti první SPAN s hodnotou (sazba, ne RPSN)
+      const rateText = await page.evaluate(() => {
+        const els = document.querySelectorAll("span.CalculatorResultSectionItemContainer-value");
+        return els[0] ? els[0].textContent.trim() : null;
+      });
+
+      rates[key] = parseRate(rateText);
+      log(`  RB ${label}: ${rateText} → ${rates[key]}`);
+    }
+
+    if (!rates.fix_5) {
+      log("  RB: fix_5 se nepodařilo extrahovat");
+      return null;
+    }
+
+    return {
+      bank: "Raiffeisenbank",
+      fix_3: rates.fix_3 ?? rates.fix_5,
+      fix_5: rates.fix_5,
+      fix_7: rates.fix_7 ?? rates.fix_5,
+      fix_10: rates.fix_10 ?? rates.fix_5,
+    };
   } catch (err) {
     log(`  → error: ${err.message}`);
     return null;
