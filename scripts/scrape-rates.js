@@ -1,20 +1,13 @@
 /**
  * Mortgage rate scraper for 4fin-web
- *
- * Sources:
- *   1. hypoindex.cz  — primary, all banks in one table
- *   2. Air Bank      — direct, cross-check fix_5
+ * Scrapes each bank's mortgage page directly using regex on rendered text.
  *
  * Run: node scrape-rates.js
- * Env: SUPABASE_URL, SUPABASE_SERVICE_KEY
+ * Env: SUPABASE_URL, SUPABASE_SERVICE_KEY, PUPPETEER_EXECUTABLE_PATH (optional)
  */
 
 import puppeteer from "puppeteer";
 import { createClient } from "@supabase/supabase-js";
-
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -26,29 +19,11 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-// Canonical bank names — map scraped strings (lowercase) to stored name
-const BANK_MAP = {
-  "air bank": "Air Bank",
-  "airbank": "Air Bank",
-  "česká spořitelna": "Česká spořitelna",
-  "spořitelna": "Česká spořitelna",
-  "raiffeisenbank": "Raiffeisenbank",
-  "raiffeisen": "Raiffeisenbank",
-  "čsob": "ČSOB / Hyp. banka",
-  "csob": "ČSOB / Hyp. banka",
-  "hypoteční banka": "ČSOB / Hyp. banka",
-  "era": "ČSOB / Hyp. banka",
-  "komerční banka": "Komerční banka",
-  "kb": "Komerční banka",
-  "moneta": "Moneta",
-  "moneta money bank": "Moneta",
-  "mbank": "mBank",
-  "m bank": "mBank",
-  "unicredit": "UniCredit Bank",
-  "unicredit bank": "UniCredit Bank",
-};
+function log(msg) {
+  console.log(`[${new Date().toISOString()}] ${msg}`);
+}
 
-// Parse Czech "4,79 %" → 4.79
+// Parse Czech "4,79 %" or "4.79%" → 4.79
 function parseRate(str) {
   if (!str) return null;
   const m = str.replace(/\s/g, "").match(/(\d+)[,.](\d{2})/);
@@ -56,196 +31,125 @@ function parseRate(str) {
   return parseFloat(`${m[1]}.${m[2]}`);
 }
 
-function normalizeBankName(raw) {
-  const lower = raw.trim().toLowerCase();
-  for (const [key, canonical] of Object.entries(BANK_MAP)) {
-    if (lower.includes(key)) return canonical;
-  }
-  return null;
-}
-
-function log(msg) {
-  console.log(`[${new Date().toISOString()}] ${msg}`);
-}
-
 // ---------------------------------------------------------------------------
-// Source 1: hypoindex.cz
+// Bank configs — url + custom extractor or generic regex patterns
 // ---------------------------------------------------------------------------
 
-async function scrapeHypoindex(page) {
-  const URLS = [
-    "https://www.hypoindex.cz/hypotecni-sazby/",
-    "https://www.hypoindex.cz/srovnani-hypotecnich-bank/",
-  ];
-
-  for (const url of URLS) {
-    log(`Hypoindex → ${url}`);
-    try {
-      await page.goto(url, { waitUntil: "networkidle2", timeout: 30_000 });
-      // Give JS extra time to render dynamic content
-      await new Promise((r) => setTimeout(r, 4000));
-
-      const result = await page.evaluate((bankMap) => {
-        const rates = [];
-
-        // Strategy A: find <table> with bank names + % values
-        const tables = Array.from(document.querySelectorAll("table"));
-        for (const table of tables) {
-          const headers = Array.from(table.querySelectorAll("th")).map((th) =>
-            th.textContent.trim().toLowerCase()
-          );
-
-          // Find column indices for fix periods
-          const colFix3 = headers.findIndex((h) => h.includes("3"));
-          const colFix5 = headers.findIndex((h) => h.includes("5"));
-          const colFix7 = headers.findIndex((h) => h.includes("7"));
-          const colFix10 = headers.findIndex(
-            (h) => h.includes("10") || h.includes("10")
-          );
-
-          if (colFix5 < 0) continue; // not a rates table
-
-          const rows = Array.from(table.querySelectorAll("tbody tr"));
-          for (const row of rows) {
-            const cells = Array.from(row.querySelectorAll("td")).map((td) =>
-              td.textContent.trim()
-            );
-            if (cells.length < 2) continue;
-            const bankName = cells[0];
-            rates.push({
-              bankRaw: bankName,
-              fix_3: cells[colFix3] ?? null,
-              fix_5: cells[colFix5] ?? null,
-              fix_7: cells[colFix7] ?? null,
-              fix_10: cells[colFix10] ?? null,
-            });
-          }
-          if (rates.length > 0) return { rates, strategy: "table" };
-        }
-
-        // Strategy B: structured divs/list items with bank + rates
-        const rateElements = Array.from(
-          document.querySelectorAll(
-            "[class*='rate'], [class*='bank'], [class*='sazb'], [data-bank]"
-          )
-        );
-        const rowMap = {};
-        for (const el of rateElements) {
-          const text = el.textContent;
-          // Look for bank name + adjacent percentages
-          const pctMatches = [...text.matchAll(/(\d+[,.]\d{2})\s*%/g)];
-          if (pctMatches.length >= 2) {
-            // Likely a row with multiple rates
-            for (const [key, canonical] of Object.entries(bankMap)) {
-              if (text.toLowerCase().includes(key)) {
-                if (!rowMap[canonical]) {
-                  rowMap[canonical] = pctMatches.map((m) => m[0]);
-                }
-              }
-            }
-          }
-        }
-        const divRates = Object.entries(rowMap).map(([bank, vals]) => ({
-          bankRaw: bank,
-          fix_3: vals[0] ?? null,
-          fix_5: vals[1] ?? null,
-          fix_7: vals[2] ?? null,
-          fix_10: vals[3] ?? null,
-        }));
-        if (divRates.length > 0) return { rates: divRates, strategy: "divs" };
-
-        // Debug: dump what elements/tables exist on the page
-        const debug = {
-          tables: document.querySelectorAll("table").length,
-          tableHeaders: Array.from(document.querySelectorAll("th")).map((th) => th.textContent.trim()).slice(0, 20),
-          rateClasses: [...new Set(
-            Array.from(document.querySelectorAll("*"))
-              .filter((el) => /rate|sazb|bank|hypot/i.test(el.className))
-              .map((el) => el.tagName + "." + el.className.trim().split(/\s+/)[0])
-          )].slice(0, 20),
-          bodyText: document.body.innerText.slice(0, 800),
-        };
-        return { rates: [], strategy: "none", debug };
-      }, BANK_MAP);
-
-      log(`  → strategy: ${result.strategy}, rows: ${result.rates.length}`);
-      if (result.strategy === "none" && result.debug) {
-        log(`  DEBUG tables: ${result.debug.tables}`);
-        log(`  DEBUG th texts: ${JSON.stringify(result.debug.tableHeaders)}`);
-        log(`  DEBUG rate classes: ${JSON.stringify(result.debug.rateClasses)}`);
-        log(`  DEBUG body snippet:\n${result.debug.bodyText}`);
-      }
-
-      const parsed = [];
-      for (const row of result.rates) {
-        const bank = normalizeBankName(row.bankRaw);
-        if (!bank) continue;
-        const fix_3 = parseRate(row.fix_3);
-        const fix_5 = parseRate(row.fix_5);
-        const fix_7 = parseRate(row.fix_7);
-        const fix_10 = parseRate(row.fix_10);
-        if (!fix_5) continue; // need at least fix_5
-        parsed.push({ bank, fix_3: fix_3 ?? fix_5, fix_5, fix_7: fix_7 ?? fix_5, fix_10: fix_10 ?? fix_5 });
-      }
-
-      if (parsed.length >= 3) {
-        log(`  → parsed ${parsed.length} banks`);
-        return parsed;
-      }
-    } catch (err) {
-      log(`  → error: ${err.message}`);
-    }
-  }
-
-  log("Hypoindex → no usable data from any URL");
-  return [];
-}
+const BANKS = [
+  {
+    bank: "Air Bank",
+    url: "https://www.airbank.cz/hypoteka/",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,80}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,80}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,80}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,80}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "Česká spořitelna",
+    url: "https://www.csas.cz/cs/hypoteky-a-uvery/hypoteka",
+    patterns: {
+      fix_3: /3\s*(?:rok[yu]?|leté?\s+fix)[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*(?:let|leté?\s+fix)[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*(?:let|leté?\s+fix)[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*(?:let|leté?\s+fix)[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "Raiffeisenbank",
+    url: "https://www.rb.cz/osobni/bydleni/hypoteky",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "ČSOB / Hyp. banka",
+    url: "https://www.csob.cz/portal/lide/produkty/uvery-na-bydleni/hypotecni-uver",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "Komerční banka",
+    url: "https://www.kb.cz/cs/uvery-a-hypoteky/hypoteky",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "Moneta",
+    url: "https://www.moneta.cz/lide/pujcky-a-uvery/hypoteky",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "mBank",
+    url: "https://www.mbank.cz/osobni/pujcky/hypoteka/",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+  {
+    bank: "UniCredit Bank",
+    url: "https://www.unicreditbank.cz/cs/obcane/hypoteky.html",
+    patterns: {
+      fix_3: /3\s*rok[yu]?[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_5: /5\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_7: /7\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+      fix_10: /10\s*let[\s\S]{0,100}?(\d+[,.]\d{2})\s*%/i,
+    },
+  },
+];
 
 // ---------------------------------------------------------------------------
-// Source 2: Air Bank (direct, confirmed working)
+// Generic bank scraper
 // ---------------------------------------------------------------------------
 
-async function scrapeAirBank(page) {
-  log("Air Bank → https://www.airbank.cz/hypoteka/");
+async function scrapeBank(page, config) {
+  log(`${config.bank} → ${config.url}`);
   try {
-    await page.goto("https://www.airbank.cz/hypoteka/", {
-      waitUntil: "networkidle2",
-      timeout: 30_000,
-    });
-    await new Promise((r) => setTimeout(r, 1500));
+    await page.goto(config.url, { waitUntil: "networkidle2", timeout: 30_000 });
+    await new Promise((r) => setTimeout(r, 2000));
 
-    const result = await page.evaluate(() => {
-      // Air Bank puts fixation options as buttons/tabs with rate values nearby
-      const text = document.body.innerText;
+    const text = await page.evaluate(() => document.body.innerText);
 
-      // Extract all "X let / X roky" + "X,XX %" pairs from the page
-      const fixPatterns = [
-        { label: "fix_3", regex: /3\s*rok[yu]?[\s\S]{0,60}?(\d+[,.]\d{2})\s*%/i },
-        { label: "fix_5", regex: /5\s*let[\s\S]{0,60}?(\d+[,.]\d{2})\s*%/i },
-        { label: "fix_7", regex: /7\s*let[\s\S]{0,60}?(\d+[,.]\d{2})\s*%/i },
-        { label: "fix_10", regex: /10\s*let[\s\S]{0,60}?(\d+[,.]\d{2})\s*%/i },
-      ];
+    // Serialize patterns to strings for transfer into browser context
+    const results = {};
+    for (const [key, regex] of Object.entries(config.patterns)) {
+      const m = text.match(regex);
+      results[key] = m ? m[1] : null;
+    }
 
-      const rates = {};
-      for (const { label, regex } of fixPatterns) {
-        const m = text.match(regex);
-        rates[label] = m ? m[1] : null;
-      }
-      return rates;
-    });
-
-    const fix_3 = parseRate(result.fix_3);
-    const fix_5 = parseRate(result.fix_5);
-    const fix_7 = parseRate(result.fix_7);
-    const fix_10 = parseRate(result.fix_10);
+    const fix_3 = parseRate(results.fix_3);
+    const fix_5 = parseRate(results.fix_5);
+    const fix_7 = parseRate(results.fix_7);
+    const fix_10 = parseRate(results.fix_10);
 
     if (!fix_5) {
-      log("Air Bank → could not extract fix_5, skipping");
+      // Debug: dump first 600 chars so we can tune the regex
+      log(`  → no fix_5 found. Page snippet:\n${text.slice(0, 600)}`);
       return null;
     }
 
     const entry = {
-      bank: "Air Bank",
+      bank: config.bank,
       fix_3: fix_3 ?? fix_5,
       fix_5,
       fix_7: fix_7 ?? fix_5,
@@ -254,46 +158,13 @@ async function scrapeAirBank(page) {
     log(`  → ${JSON.stringify(entry)}`);
     return entry;
   } catch (err) {
-    log(`Air Bank → error: ${err.message}`);
+    log(`  → error: ${err.message}`);
     return null;
   }
 }
 
 // ---------------------------------------------------------------------------
-// Merge: if both sources have data for the same bank, average them
-// ---------------------------------------------------------------------------
-
-function mergeSources(primary, secondary) {
-  const byBank = {};
-
-  for (const r of primary) {
-    byBank[r.bank] = { ...r, count: 1 };
-  }
-
-  for (const r of secondary) {
-    if (!r) continue;
-    if (byBank[r.bank]) {
-      // Average
-      const existing = byBank[r.bank];
-      byBank[r.bank] = {
-        bank: r.bank,
-        fix_3: +((existing.fix_3 + r.fix_3) / 2).toFixed(2),
-        fix_5: +((existing.fix_5 + r.fix_5) / 2).toFixed(2),
-        fix_7: +((existing.fix_7 + r.fix_7) / 2).toFixed(2),
-        fix_10: +((existing.fix_10 + r.fix_10) / 2).toFixed(2),
-        count: existing.count + 1,
-      };
-      log(`  Averaged ${r.bank} from ${existing.count + 1} sources`);
-    } else {
-      byBank[r.bank] = { ...r, count: 1 };
-    }
-  }
-
-  return Object.values(byBank).map(({ count: _c, ...rest }) => rest);
-}
-
-// ---------------------------------------------------------------------------
-// Save to Supabase
+// Save to Supabase — delete existing rows for these banks, then insert
 // ---------------------------------------------------------------------------
 
 async function saveRates(rates) {
@@ -307,9 +178,8 @@ async function saveRates(rates) {
     updated_at: new Date().toISOString(),
   }));
 
-  log(`Saving ${rows.length} banks to Supabase...`);
+  log(`\nSaving ${rows.length} banks to Supabase...`);
 
-  // Delete existing rows for banks we're about to write, then insert
   const banks = rows.map((r) => r.bank);
   const { error: delError } = await supabase.from("rates").delete().in("bank", banks);
   if (delError) {
@@ -323,9 +193,9 @@ async function saveRates(rates) {
     process.exit(1);
   }
 
-  log("Saved OK");
+  log("Saved OK:");
   for (const r of rows) {
-    log(`  ${r.bank}: ${r.fix_3} / ${r.fix_5} / ${r.fix_7} / ${r.fix_10}`);
+    log(`  ${r.bank.padEnd(22)} fix3=${r.fix_3}  fix5=${r.fix_5}  fix7=${r.fix_7}  fix10=${r.fix_10}`);
   }
 }
 
@@ -352,18 +222,16 @@ async function main() {
   );
   await page.setViewport({ width: 1440, height: 900 });
 
+  const results = [];
+
   try {
-    // Primary source
-    const hypoindexRates = await scrapeHypoindex(page);
+    for (const config of BANKS) {
+      const entry = await scrapeBank(page, config);
+      if (entry) results.push(entry);
+    }
 
-    // Secondary source (cross-check)
-    const airBankRate = await scrapeAirBank(page);
-
-    // If hypoindex returned Air Bank too, override with direct scrape (more accurate)
-    const merged = mergeSources(hypoindexRates, [airBankRate]);
-
-    log(`\nFinal dataset: ${merged.length} banks`);
-    await saveRates(merged);
+    log(`\nScraped ${results.length}/${BANKS.length} banks successfully.`);
+    await saveRates(results);
   } finally {
     await browser.close();
   }
