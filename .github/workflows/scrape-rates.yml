@@ -24,6 +24,10 @@ jobs:
         working-directory: scripts
         run: npm ci
 
+      - name: Install Chromium
+        working-directory: scripts
+        run: npx puppeteer browsers install chrome
+
       - name: Run rate scraper
         working-directory: scripts
         env:
