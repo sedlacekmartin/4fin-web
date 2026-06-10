@@ -1,0 +1,13 @@
+{
+  "name": "4fin-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scrape": "node scrape-rates.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
+    "puppeteer": "^24.15.0"
+  }
+}

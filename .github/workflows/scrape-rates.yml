@@ -1,0 +1,32 @@
+name: Scrape Mortgage Rates
+
+on:
+  schedule:
+    # 7:00 CET / 8:00 CEST každý pracovní den
+    - cron: "0 6 * * 1-5"
+  workflow_dispatch: # ruční spuštění z GitHub UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: scripts/package-lock.json
+
+      - name: Install scraper dependencies
+        working-directory: scripts
+        run: npm ci
+
+      - name: Run rate scraper
+        working-directory: scripts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scrape-rates.js
