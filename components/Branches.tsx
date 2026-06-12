@@ -31,7 +31,7 @@ const BRANCHES = [
 
 export default function Branches() {
   return (
-    <section className="py-20 px-4 bg-[#F6F7F9]">
+    <section id="pobocky" className="py-20 px-4 bg-[#F6F7F9]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <p className="text-[#D6006C] text-sm font-medium uppercase tracking-widest mb-2">

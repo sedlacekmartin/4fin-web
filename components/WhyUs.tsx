@@ -42,7 +42,7 @@ const TESTIMONIALS = [
 
 export default function WhyUs() {
   return (
-    <section className="py-[88px] px-7 bg-[#0D1117] text-white">
+    <section id="proc" className="py-[88px] px-7 bg-[#0D1117] text-white">
       <div className="max-w-[1200px] mx-auto">
 
         {/* Header */}

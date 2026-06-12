@@ -116,7 +116,7 @@ export default function InvestmentTeaser() {
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-11">
           <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
-            Chytrý nástroj
+            Strategie pro vás
           </div>
           <h2
             className="font-display font-bold tracking-[-0.03em] mb-3"
@@ -125,8 +125,8 @@ export default function InvestmentTeaser() {
             Splaťte hypotéku dřív.
           </h2>
           <p className="text-[#3A424E] text-[1.06rem] max-w-[54ch]">
-            Jeden z triků, které s klienty řešíme: delší splatnost = nižší splátka,
-            a rozdíl investujete.
+            Jeden z přístupů, které s klienty pravidelně řešíme: delší splatnost sníží
+            měsíční splátku — a ušetřený rozdíl investujete.
           </p>
         </div>
 

@@ -2,7 +2,7 @@ const STEPS = [
   {
     num: "01",
     title: "Zavolejte nebo napište",
-    desc: "Řeknete nám co potřebujete — výši úvěru, situaci, termín. Pět minut vašeho času.",
+    desc: "Popíšete nám svou situaci — co plánujete, výši úvěru, termín. Stačí pět minut.",
     note: "Funguje i přes formulář níže nebo e-mailem.",
     icon: "💬",
   },
@@ -91,7 +91,7 @@ export default function HowItWorks() {
             Začít prvním krokem →
           </a>
           <p className="text-[0.8rem] text-[#697586] mt-3">
-            Žádný závazek. Konzultace je zdarma.
+            Žádný závazek. Bez poplatku.
           </p>
         </div>
       </div>

@@ -31,13 +31,13 @@ export default function Services() {
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-11">
           <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
-            Co řešíme
+            S čím pomáháme
           </div>
           <h2
             className="font-display font-bold tracking-[-0.03em]"
             style={{ fontSize: "clamp(1.9rem, 3.4vw, 2.7rem)" }}
           >
-            Jeden tým pro bydlení i peníze.
+            Jeden tým. Celý váš finanční život.
           </h2>
         </div>
 

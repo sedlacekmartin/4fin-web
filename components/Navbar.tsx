@@ -3,10 +3,10 @@
 import { useState } from "react";
 
 const NAV_LINKS = [
-  { href: "#kalkulacka", label: "Kalkulačka" },
+  { href: "#kalkulacka", label: "Propočet" },
   { href: "#sazby", label: "Sazby" },
   { href: "#sluzby", label: "Služby" },
-  { href: "#proc", label: "Proč my" },
+  { href: "#proc", label: "Proč 4fin" },
   { href: "#pobocky", label: "Pobočky" },
 ];
 
@@ -45,7 +45,7 @@ export default function Navbar() {
             href="#kontakt"
             className="inline-flex items-center gap-2 bg-[#D6006C] text-white font-semibold text-[0.95rem] px-5 py-2.5 rounded-[10px] hover:bg-[#A80055] transition-all hover:-translate-y-px shadow-[0_4px_14px_rgba(214,0,108,0.25)]"
           >
-            Chci poradit
+            Poradit se zdarma
           </a>
         </div>
 
@@ -84,7 +84,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className="bg-[#D6006C] text-white font-semibold text-[0.95rem] px-5 py-3 rounded-[10px] text-center"
             >
-              Chci poradit
+              Poradit se zdarma
             </a>
           </div>
         </div>

@@ -12,6 +12,11 @@ const FIX_OPTIONS: { label: string; key: FixKey }[] = [
   { label: "10 let", key: "fix_10" },
 ];
 
+const SLOGANS = [
+  { pre: "finanční ",    accent: "poradci." },
+  { pre: "průvodci ",    accent: "hypotékou." },
+  { pre: "partneři pro ", accent: "vaše peníze." },
+];
 
 export default function Hero() {
   const [loan, setLoan] = useState(3_500_000);
@@ -19,8 +24,13 @@ export default function Hero() {
   const [fixKey, setFixKey] = useState<FixKey>("fix_5");
   const [rates, setRates] = useState<Rate[]>(FALLBACK_RATES);
   const [displayPayment, setDisplayPayment] = useState(0);
+  const [displayRate, setDisplayRate] = useState(0);
+  const [sloganIdx, setSloganIdx] = useState(0);
+  const [sloganVisible, setSloganVisible] = useState(true);
   const rafRef = useRef<number>(0);
+  const rateRafRef = useRef<number>(0);
   const prevPayRef = useRef(0);
+  const prevRateRef = useRef(0);
 
   useEffect(() => {
     fetch("/api/rates")
@@ -37,6 +47,10 @@ export default function Hero() {
   );
 
   const bestRate = sorted[0]?.[fixKey] ?? 4.79;
+  const absoluteBestRate = useMemo(
+    () => Math.min(...rates.flatMap((r) => [r.fix_3, r.fix_5, r.fix_7, r.fix_10])),
+    [rates]
+  );
   const targetPayment = anuita(loan, bestRate, years);
   const overpay = targetPayment * years * 12 - loan;
   const rmin = sorted[0]?.[fixKey] ?? 0;
@@ -58,6 +72,35 @@ export default function Hero() {
     rafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafRef.current);
   }, [targetPayment]);
+
+  useEffect(() => {
+    const from = prevRateRef.current;
+    const to = absoluteBestRate;
+    prevRateRef.current = to;
+    let start: number | null = null;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / 900, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplayRate(from + (to - from) * eased);
+      if (p < 1) rateRafRef.current = requestAnimationFrame(step);
+    }
+    cancelAnimationFrame(rateRafRef.current);
+    rateRafRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rateRafRef.current);
+  }, [absoluteBestRate]);
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const interval = setInterval(() => {
+      setSloganVisible(false);
+      timeout = setTimeout(() => {
+        setSloganIdx((i) => (i + 1) % SLOGANS.length);
+        setSloganVisible(true);
+      }, 350);
+    }, 3500);
+    return () => { clearInterval(interval); clearTimeout(timeout); };
+  }, []);
 
   return (
     <header className="min-h-[92vh] grid md:grid-cols-[56fr_44fr]">
@@ -97,36 +140,45 @@ export default function Hero() {
             className="font-display font-black leading-[1.04] tracking-[-0.04em] text-white"
             style={{ fontSize: "clamp(2.6rem, 4.5vw, 4.2rem)" }}
           >
-            Vaše hypotéka<br />
-            může stát{" "}
-            <span className="text-[#D6006C]">míň.</span>
+            Vaši nezávislí<br />
+            <span
+              style={{
+                display: "inline-block",
+                transition: "opacity 0.35s ease, transform 0.35s ease",
+                opacity: sloganVisible ? 1 : 0,
+                transform: sloganVisible ? "translateY(0)" : "translateY(-10px)",
+              }}
+            >
+              {SLOGANS[sloganIdx].pre}
+              <span className="text-[#D6006C]">{SLOGANS[sloganIdx].accent}</span>
+            </span>
           </h1>
 
           {/* Best rate callout */}
           <div className="mt-5 mb-5">
             <div className="mb-1 text-[0.75rem] font-medium uppercase tracking-[0.06em] text-white/40">
-              Nejnižší sazba dnes
+              Nejnižší dostupná sazba dnes
             </div>
             <div
               className="font-display font-black tabular-nums leading-none text-[#D6006C]"
               style={{ fontSize: "clamp(3rem, 4.5vw, 4rem)" }}
             >
-              {bestRate.toFixed(2).replace(".", ",")} %
+              {displayRate.toFixed(2).replace(".", ",")} %
             </div>
           </div>
 
           {/* Subheadline */}
           <p className="mb-8 max-w-[44ch] text-[1.05rem] leading-relaxed text-white/55">
-            Srovnáme všechny banky a vyjednáme sazbu,
-            na kterou sami nedosáhnete. Konzultace je zdarma.
+            Hypotéky, investice, pojištění — vše pod jednou střechou.
+            Nezávisle, bez poplatku, vždy s ohledem jen na vás.
           </p>
 
           {/* Social proof strip */}
           <div className="mb-8 flex gap-7 border-b border-white/10 pb-8">
             {[
-              { n: "8+", label: "srovnaných bank" },
-              { n: "0 Kč", label: "poplatek za sjednání" },
-              { n: "100%", label: "nezávislý poradce" },
+              { n: "50+", label: "partnerských institucí" },
+              { n: "0 Kč", label: "za poradenství" },
+              { n: "100%", label: "na straně klienta" },
             ].map(({ n, label }) => (
               <div key={label}>
                 <div className="font-display font-black tabular-nums leading-none text-white" style={{ fontSize: "1.55rem" }}>
@@ -155,7 +207,7 @@ export default function Hero() {
 
           {/* Trust strip */}
           <div className="mt-6 flex flex-wrap gap-4 text-[0.81rem] text-white/40">
-            {["Srovnání všech bank", "Bez poplatku za sjednání", "Reálná sazba na míru"].map((t) => (
+            {["Hypotéky · Investice · Pojištění", "Bez poplatku za poradenství", "Nezávislý poradce — váš zájem první"].map((t) => (
               <span key={t}>
                 <span className="text-[#0E9D63]">✓</span> {t}
               </span>
@@ -173,7 +225,7 @@ export default function Hero() {
         >
           {/* Card header */}
           <div className="flex items-center justify-between border-b border-[#E6E8EC] px-6 py-[18px]">
-            <span className="font-display font-semibold text-[1rem]">Hypoteční kalkulačka</span>
+            <span className="font-display font-semibold text-[1rem]">Orientační propočet hypotéky</span>
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#E3F4EC] px-2.5 py-1 text-[0.72rem] font-semibold text-[#0E9D63]">
               <span className="live-dot-ring relative inline-block h-[7px] w-[7px] rounded-full bg-[#0E9D63]" />
               Live sazby

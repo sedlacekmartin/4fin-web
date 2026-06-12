@@ -60,8 +60,8 @@ export default function LeadForm() {
               Srovnání na míru do 24 hodin.
             </h2>
             <p className="text-white/70 text-[1.04rem] mb-6 leading-relaxed">
-              Nechte kontakt a co řešíte. Poradce projde nabídky bank a ozve se
-              s konkrétními čísly — bez obíhání poboček.
+              Napište nám, co potřebujete. Jeden z poradců se do 24 hodin
+              ozve s konkrétním srovnáním — vy nemusíte obíhat banky.
             </p>
             <div className="flex flex-col gap-3">
               {CHECKS.map((c) => (
@@ -96,7 +96,7 @@ export default function LeadForm() {
                   Chci nabídku na míru
                 </h3>
                 <p className="text-[0.85rem] text-[#697586] mb-[18px]">
-                  Vyplníte za 30 sekund, ozveme se telefonicky.
+                  Vyplníte za 30 sekund. Ozveme se osobně.
                 </p>
 
                 {/* Topic chips */}
@@ -134,7 +134,7 @@ export default function LeadForm() {
                   />
                   <input
                     type="text"
-                    placeholder="Stručně co řešíte (nepovinné)"
+                    placeholder="Co řešíte — koupě, refinancování, investice… (nepovinné)"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     className="w-full border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
@@ -152,13 +152,13 @@ export default function LeadForm() {
                     disabled={state === "loading"}
                     className="w-full flex justify-center bg-[#D6006C] text-white font-semibold py-[13px] rounded-[10px] hover:bg-[#A80055] transition-all hover:-translate-y-px shadow-[0_4px_14px_rgba(214,0,108,0.25)] disabled:opacity-60 mt-1"
                   >
-                    {state === "loading" ? "Odesílám…" : "Odeslat poptávku"}
+                    {state === "loading" ? "Odesílám…" : "Chci konzultaci zdarma →"}
                   </button>
                 </div>
 
                 <p className="text-[0.71rem] text-[#697586] text-center mt-3">
-                  Odesláním souhlasíte se zpracováním údajů pro účely kontaktování.
-                  Data jdou do CRM, ne třetím stranám.
+                  Odesláním souhlasíte se zpracováním kontaktních údajů.
+                  Vaše data nepředáváme třetím stranám.
                 </p>
               </>
             )}

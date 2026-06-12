@@ -2,7 +2,7 @@ const MEMBERS = [
   {
     name: "Zdeněk Melán",
     role: "Finanční poradce",
-    bio: "Hypotéky, investice a pojištění. Kontaktujte mě na zdenek.melan@4fin.cz nebo navštivte zdenekmelan.cz.",
+    bio: "Specializuji se na hypotéky, investice a pojištění. Rád vám pomůžu najít řešení přesně na míru vaší situace.",
     initials: "ZM",
     color: "#D6006C",
     email: "zdenek.melan@4fin.cz",
@@ -11,7 +11,7 @@ const MEMBERS = [
   {
     name: "Petr Ošmera",
     role: "Finanční poradce",
-    bio: "Nezávislé finanční konzultace. Kontaktujte mě na petr.osmera@4fin.cz nebo navštivte petrosmera.cz.",
+    bio: "Poskytuji nezávislé finanční poradenství — bez tlaku, bez zbytečných produktů. Jen to, co má pro vás smysl.",
     initials: "PO",
     color: "#0E9D63",
     email: "petr.osmera@4fin.cz",
@@ -20,7 +20,7 @@ const MEMBERS = [
   {
     name: "Petr Studýnka",
     role: "Finanční poradce",
-    bio: "Pomáhám klientům s hypotékami, investicemi a pojištěním napříč celou Vysočinou.",
+    bio: "Pomáhám klientům po celé Vysočině s hypotékami, investicemi i pojištěním — vždy s ohledem na jejich konkrétní situaci.",
     initials: "PS",
     color: "#0D1117",
     email: "petr.studynka@4fin.cz",
@@ -29,7 +29,7 @@ const MEMBERS = [
   {
     name: "Hana Roubcová, DiS.",
     role: "Office manažer",
-    bio: "Zajišťuje hladký chod kanceláře a koordinaci schůzek. Kontakt: hana.roubcova@4fin.cz.",
+    bio: "Stará se o to, aby každá schůzka proběhla hladce. Od prvního kontaktu přes domluvu termínu až po uzavření smlouvy.",
     initials: "HR",
     color: "#D6006C",
     email: "hana.roubcova@4fin.cz",

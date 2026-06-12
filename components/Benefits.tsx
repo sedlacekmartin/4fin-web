@@ -11,7 +11,7 @@ const ITEMS = [
     color: "#A80055",
     icon: "💸",
     stat: `${diffFmt} Kč`,
-    label: "tolik navíc přeplatíte v průměrné bance",
+    label: "o tolik více zaplatíte v průměrné bance",
     desc: `Rozdíl mezi nejlepší a průměrnou sazbou je dnes 0,5 %. Na ${new Intl.NumberFormat("cs-CZ").format(P / 1e6)} mil. Kč za ${termY} let je to právě ${diffFmt} Kč. My pracujeme na tom, abyste platili tu nižší.`,
   },
   {
@@ -60,7 +60,7 @@ export default function Benefits() {
           </h2>
           <p className="text-[#3A424E] text-[1.05rem] leading-relaxed">
             Banka neví o nabídkách konkurence — a sdělovat vám je není v jejím zájmu.
-            Náš zájem je přesně opačný.
+            Náš zájem je přesně opačný. Platí to pro hypotéku stejně jako pro investice nebo pojistky.
           </p>
         </div>
 
@@ -98,8 +98,8 @@ export default function Benefits() {
         {/* Bottom CTA strip */}
         <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[14px] bg-[#F6F7F9] border border-[#E6E8EC] px-6 py-5">
           <p className="text-[0.95rem] text-[#3A424E] max-w-[52ch]">
-            <strong className="text-[#0D1117]">Konzultace je zdarma.</strong>{" "}
-            Platí nás banky za zprostředkování — ne vy. Váš zájem a náš zájem jsou totožné.
+            <strong className="text-[#0D1117]">Poradenství je pro vás zdarma.</strong>{" "}
+            Odměnu dostáváme od bank za zprostředkování — ne od vás. Proto je náš zájem přirozeně totožný s vaším.
           </p>
           <a
             href="#kontakt"

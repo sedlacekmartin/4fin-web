@@ -77,7 +77,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Centrum 4fin Třebíč. Všechna práva vyhrazena.
           </p>
           <p className="text-white/30 text-xs">
-            Výsledky kalkulaček jsou orientační a nezakládají právní nárok.
+            Výsledky propočtů jsou orientační a nemohou nahradit individuální nabídku banky.
           </p>
         </div>
       </div>
