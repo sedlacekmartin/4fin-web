@@ -131,7 +131,7 @@ export default function Hero() {
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0E9D63]/25 bg-[#0E9D63]/10 px-3 py-1.5 text-[0.77rem] font-semibold text-[#0E9D63]">
               <span className="live-dot-ring relative inline-block h-[6px] w-[6px] rounded-full bg-[#0E9D63]" />
-              Sazby ze dneška · {new Date().toLocaleDateString("cs-CZ")}
+              Sazby aktuální k · {new Date().toLocaleDateString("cs-CZ")}
             </span>
           </div>
 
@@ -201,7 +201,7 @@ export default function Hero() {
       </div>
 
       {/* ──────────── RIGHT PANEL ──────────── */}
-      <div className="relative flex items-center justify-center overflow-hidden bg-[#0D1117] px-6 py-12 md:px-10">
+      <div className="relative flex items-center justify-start overflow-hidden bg-[#0D1117] px-6 py-12 md:pl-10 md:pr-14">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_60%_50%,rgba(177,0,77,0.07)_0%,transparent_70%)]" />
         <div
           id="kalkulacka"
@@ -267,7 +267,7 @@ export default function Hero() {
             {/* Result box */}
             <div className="rounded-xl bg-[#f2f0ed] p-[18px]">
               <div>
-                <div className="text-[0.8rem] text-[#697586]">Orientační měsíční splátka</div>
+                <div className="text-[0.8rem] text-[#697586]">Orientační měsíční splátka*</div>
                 <div
                   className="font-display font-bold leading-none tracking-[-0.03em] mt-1.5"
                   style={{ fontSize: "2.7rem" }}
@@ -322,8 +322,8 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="px-6 pb-5 text-[0.74rem] text-[#697586]">
-            Orientační výpočet z dnešních sazeb. Reálná nabídka závisí na LTV, fixaci a příjmech.
+          <div className="px-6 pb-5 text-[0.74rem] text-[#697586] leading-relaxed">
+            *Orientační výpočet měsíční splátky na základě dnešní nejnižší úrokové sazby. Reálná nabídka se může lišit. <a href="#kontakt" className="underline hover:text-[#b1004d]">Kontaktujte nás</a> pro konkrétní výpočet.
           </div>
         </div>
       </div>
