@@ -40,6 +40,9 @@ export default function Branches() {
           <h2 className="font-display text-4xl font-bold text-[#0D1117]">
             Jsme nablízku
           </h2>
+          <p className="text-[#697586] mt-3 text-[1rem]">
+            Doma jsme v Třebíči, pomáháme po celé Vysočině a jižní Moravě.
+          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

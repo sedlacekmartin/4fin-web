@@ -17,7 +17,7 @@ const STEPS = [
     num: "03",
     title: "Vyberete a podepíšete",
     desc: "Vyberete nabídku, která vám sedí. Papíry, komunikaci s bankou a všechnu administrativu vyřídíme my.",
-    note: "Vy přijdete jen podepsat hotovou smlouvu.",
+    note: "Vy přijdete jen podepsat — k nám do Třebíče, Brna nebo Náměšti.",
     icon: "✅",
   },
   {

@@ -10,7 +10,7 @@ const PROOFS = [
     value: "5 000+",
     label: "spokojených klientů",
     description:
-      "Za roky praxe jsme pomohli tisícům rodin s hypotékou, pojistkou nebo investicí. Nejvíc klientů přichází na doporučení.",
+      "Za roky praxe jsme pomohli tisícům rodin z Třebíče, Vysočiny a okolí. Nejvíc klientů přichází na doporučení od sousedů a přátel.",
     color: "#0E9D63",
   },
   {

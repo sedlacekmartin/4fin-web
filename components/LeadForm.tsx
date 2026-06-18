@@ -60,8 +60,8 @@ export default function LeadForm() {
               Srovnání na míru do 24 hodin.
             </h2>
             <p className="text-white/70 text-[1.04rem] mb-6 leading-relaxed">
-              Napište nám, co potřebujete. Jeden z poradců se do 24 hodin
-              ozve s konkrétním srovnáním — vy nemusíte obíhat banky.
+              Napište nám, co potřebujete. Poradce z Třebíče se do 24 hodin
+              ozve s konkrétním srovnáním — vy nemusíte nikam chodit.
             </p>
             <div className="flex flex-col gap-3">
               {CHECKS.map((c) => (

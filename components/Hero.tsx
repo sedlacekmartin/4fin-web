@@ -169,7 +169,7 @@ export default function Hero() {
 
           {/* Subheadline */}
           <p className="mb-8 max-w-[44ch] text-[1.05rem] leading-relaxed text-white/55">
-            Hypotéky, investice, pojištění — vše pod jednou střechou.
+            Finanční centrum z Třebíče — hypotéky, investice, pojištění.
             Nezávisle, bez poplatku, vždy s ohledem jen na vás.
           </p>
 
