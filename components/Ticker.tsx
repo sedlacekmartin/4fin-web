@@ -21,7 +21,7 @@ export default function Ticker() {
   const items = sorted.map((r) => (
     <span
       key={r.bank}
-      className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#E6E8EC]"
+      className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#e0ddd8]"
     >
       <span
         className="w-2 h-2 rounded-[3px] flex-shrink-0"
@@ -36,19 +36,19 @@ export default function Ticker() {
   ));
 
   return (
-    <div className="border-b border-[#E6E8EC] bg-[#F6F7F9] overflow-hidden">
+    <div className="border-b border-[#e0ddd8] bg-[#f2f0ed] overflow-hidden">
       <div
         className="inline-flex whitespace-nowrap"
         style={{ animation: "ticker-scroll 40s linear infinite" }}
       >
         {/* Date marker */}
-        <span className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#E6E8EC]">
+        <span className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#e0ddd8]">
           <span className="relative inline-block w-[7px] h-[7px] rounded-full bg-[#0E9D63] live-dot-ring" />
           <span className="text-[#697586]">Sazby k {dateStr}</span>
         </span>
         {items}
         {/* Duplicate for seamless loop */}
-        <span className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#E6E8EC]">
+        <span className="inline-flex items-center gap-2 px-[22px] py-[9px] text-[0.8rem] border-r border-[#e0ddd8]">
           <span className="relative inline-block w-[7px] h-[7px] rounded-full bg-[#0E9D63] live-dot-ring" />
           <span className="text-[#697586]">Sazby k {dateStr}</span>
         </span>

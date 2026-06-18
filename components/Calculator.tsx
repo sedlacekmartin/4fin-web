@@ -88,10 +88,10 @@ export default function Calculator() {
   const maxP = payments[payments.length - 1] ?? 1;
 
   return (
-    <section id="kalkulacka" className="py-20 px-4 bg-[#F6F7F9]">
+    <section id="kalkulacka" className="py-20 px-4 bg-[#f2f0ed]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-[#D6006C] text-sm font-medium uppercase tracking-widest mb-2">
+          <p className="text-[#b1004d] text-sm font-medium uppercase tracking-widest mb-2">
             Hypoteční kalkulačka
           </p>
           <h2 className="font-display text-4xl font-bold text-[#0D1117]">
@@ -136,8 +136,8 @@ export default function Calculator() {
                     onClick={() => setFixKey(o.key)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       fixKey === o.key
-                        ? "bg-[#D6006C] text-white"
-                        : "bg-[#F6F7F9] text-[#0D1117] hover:bg-[#E6E8EC]"
+                        ? "bg-[#b1004d] text-white"
+                        : "bg-[#f2f0ed] text-[#0D1117] hover:bg-[#e0ddd8]"
                     }`}
                   >
                     {o.label}
@@ -146,7 +146,7 @@ export default function Calculator() {
               </div>
             </div>
 
-            <div className="p-4 bg-[#F6F7F9] rounded-xl">
+            <div className="p-4 bg-[#f2f0ed] rounded-xl">
               <div className="text-xs text-[#0D1117]/50 mb-1">
                 Nejlepší měsíční splátka (orientačně)
               </div>
@@ -181,8 +181,8 @@ export default function Calculator() {
                       <div
                         className={`h-7 rounded-md flex items-center px-2.5 text-xs font-medium transition-all duration-300 ${
                           isFirst
-                            ? "bg-[#D6006C] text-white"
-                            : "bg-[#E6E8EC] text-[#0D1117]"
+                            ? "bg-[#b1004d] text-white"
+                            : "bg-[#e0ddd8] text-[#0D1117]"
                         }`}
                         style={{ width: `${pct}%` }}
                       >
@@ -218,7 +218,7 @@ function SliderField({ label, value, min, max, step, display, onChange }: Slider
     <div>
       <div className="flex justify-between mb-2">
         <label className="text-sm font-medium text-[#0D1117]">{label}</label>
-        <span className="font-display font-bold text-[#D6006C] text-sm">{display}</span>
+        <span className="font-display font-bold text-[#b1004d] text-sm">{display}</span>
       </div>
       <input
         type="range"
@@ -227,7 +227,7 @@ function SliderField({ label, value, min, max, step, display, onChange }: Slider
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[#D6006C]"
+        className="w-full accent-[#b1004d]"
       />
     </div>
   );

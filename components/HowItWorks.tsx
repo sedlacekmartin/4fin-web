@@ -20,16 +20,23 @@ const STEPS = [
     note: "Vy přijdete jen podepsat hotovou smlouvu.",
     icon: "✅",
   },
+  {
+    num: "04",
+    title: "Jsme tu i potom",
+    desc: "Nespoléháme se na to, že se ozvete sami. Sledujeme trh a před každou refixací, změnou situace nebo lepší příležitostí vás kontaktujeme jako první.",
+    note: "Pravidelný servis a aktualizace plánu zdarma.",
+    icon: "🔄",
+  },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-[88px] px-7 bg-[#F6F7F9]">
+    <section className="py-[88px] px-7 bg-[#f2f0ed]">
       <div className="max-w-[1200px] mx-auto">
 
         {/* Header */}
         <div className="mb-14 max-w-[540px]">
-          <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
+          <div className="text-[0.78rem] font-semibold text-[#b1004d] uppercase tracking-widest mb-3">
             Jak to funguje
           </div>
           <h2
@@ -45,23 +52,23 @@ export default function HowItWorks() {
         </div>
 
         {/* Steps */}
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+        <div className="grid md:grid-cols-4 gap-6 md:gap-8 relative">
 
           {/* Connecting line (desktop only) */}
-          <div className="hidden md:block absolute top-[28px] left-[calc(33.33%+16px)] right-[calc(33.33%+16px)] h-px bg-[#D9DCE1]" />
+          <div className="hidden md:block absolute top-[28px] left-[calc(25%+16px)] right-[calc(25%+16px)] h-px bg-[#e0ddd8]" />
 
           {STEPS.map((step, i) => (
             <div key={step.num} className="relative">
 
               {/* Step number bubble */}
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-14 h-14 rounded-full bg-white border-2 border-[#E6E8EC] flex items-center justify-center flex-shrink-0 shadow-sm relative z-10">
-                  <span className="font-display font-black text-[#D6006C] text-[0.95rem]">
+                <div className="w-14 h-14 rounded-full bg-white border-2 border-[#e0ddd8] flex items-center justify-center flex-shrink-0 shadow-sm relative z-10">
+                  <span className="font-display font-black text-[#b1004d] text-[0.95rem]">
                     {step.num}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="md:hidden h-px flex-1 bg-[#D9DCE1]" />
+                  <div className="md:hidden h-px flex-1 bg-[#e0ddd8]" />
                 )}
               </div>
 

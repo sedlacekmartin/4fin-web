@@ -40,10 +40,10 @@ function PreviewChart() {
   const by = beMonth > 0 ? Y(inv[beMonth]) : 0;
 
   return (
-    <div className="bg-white border border-[#E6E8EC] rounded-xl p-5">
+    <div className="bg-white border border-[#e0ddd8] rounded-xl p-5">
       <div className="flex gap-5 mb-3 text-[0.8rem] text-[#3A424E]">
         <span className="flex items-center gap-1.5">
-          <i className="inline-block w-4 h-0.5 bg-[#D6006C] rounded" /> Zbývající dluh
+          <i className="inline-block w-4 h-0.5 bg-[#b1004d] rounded" /> Zbývající dluh
         </span>
         <span className="flex items-center gap-1.5">
           <i className="inline-block w-4 h-0.5 bg-[#0E9D63] rounded" /> Hodnota investice
@@ -68,7 +68,7 @@ function PreviewChart() {
           d={`${inv.map((v, k) => `${k === 0 ? "M" : "L"} ${X(k).toFixed(1)} ${Y(v).toFixed(1)}`).join(" ")} L ${X(n).toFixed(1)} ${(pad.t + ih).toFixed(1)} L ${pad.l} ${(pad.t + ih).toFixed(1)} Z`}
           fill="url(#pvIg)"
         />
-        <polyline points={pts(bal)} fill="none" stroke="#D6006C" strokeWidth="2.6" />
+        <polyline points={pts(bal)} fill="none" stroke="#b1004d" strokeWidth="2.6" />
         <polyline points={pts(inv)} fill="none" stroke="#0E9D63" strokeWidth="2.6" />
         {beMonth > 0 && (
           <>
@@ -115,7 +115,7 @@ export default function InvestmentTeaser() {
     <section className="py-[88px] px-7 bg-white" style={{ paddingTop: 0 }}>
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-11">
-          <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
+          <div className="text-[0.78rem] font-semibold text-[#b1004d] uppercase tracking-widest mb-3">
             Strategie pro vás
           </div>
           <h2
@@ -130,14 +130,14 @@ export default function InvestmentTeaser() {
           </p>
         </div>
 
-        <div className="bg-white border border-[#E6E8EC] rounded-[18px] overflow-hidden shadow-[0_4px_24px_rgba(13,17,23,0.07)]">
+        <div className="bg-white border border-[#e0ddd8] rounded-[18px] overflow-hidden shadow-[0_4px_24px_rgba(13,17,23,0.07)]">
           {gate === "unlocked" ? (
             <div className="p-[34px]">
               <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <h3 className="font-display text-[1.4rem] font-bold">
                   Splaťte dříve díky investování rozdílu
                 </h3>
-                <span className="text-[0.72rem] font-bold bg-[#FCE7F1] text-[#A80055] px-2 py-0.5 rounded-lg">
+                <span className="text-[0.72rem] font-bold bg-[#f5e0e9] text-[#8c1642] px-2 py-0.5 rounded-lg">
                   Orientační
                 </span>
               </div>
@@ -149,10 +149,10 @@ export default function InvestmentTeaser() {
               <DualCalculator />
             </div>
           ) : (
-            <div className="p-[34px] grid md:grid-cols-[1.1fr_1fr] gap-[34px] items-center bg-gradient-to-b from-white to-[#F6F7F9]">
+            <div className="p-[34px] grid md:grid-cols-[1.1fr_1fr] gap-[34px] items-center bg-gradient-to-b from-white to-[#f2f0ed]">
               {/* Left */}
               <div>
-                <div className="w-[42px] h-[42px] rounded-[11px] bg-[#FCE7F1] text-[#A80055] grid place-items-center text-[1.1rem] mb-4">
+                <div className="w-[42px] h-[42px] rounded-[11px] bg-[#f5e0e9] text-[#8c1642] grid place-items-center text-[1.1rem] mb-4">
                   🔒
                 </div>
                 <h3
@@ -160,7 +160,7 @@ export default function InvestmentTeaser() {
                   style={{ fontSize: "1.6rem" }}
                 >
                   Splaťte hypotéku{" "}
-                  <span className="text-[#D6006C]">o roky dřív</span> — bez vyšší
+                  <span className="text-[#b1004d]">o roky dřív</span> — bez vyšší
                   splátky.
                 </h3>
                 <p className="text-[#3A424E] text-[1rem] mb-2 max-w-[48ch]">
@@ -168,7 +168,7 @@ export default function InvestmentTeaser() {
                   <strong>rozdíl</strong> každý měsíc investujete. Výnos pracuje za
                   vás a nasčítaná částka dokáže zbytek hypotéky doplatit dřív.
                 </p>
-                <p className="text-[#D6006C] font-semibold text-[1rem] mb-5">
+                <p className="text-[#b1004d] font-semibold text-[1rem] mb-5">
                   Odemkněte interaktivní propočet s grafem a bodem zlomu — zdarma,
                   na vaše čísla.
                 </p>
@@ -180,7 +180,7 @@ export default function InvestmentTeaser() {
                       placeholder="Jméno"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="flex-1 border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
+                      className="flex-1 border border-[#e0ddd8] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#b1004d] focus:shadow-[0_0_0_3px_#f5e0e9] transition-all"
                     />
                     <input
                       type="tel"
@@ -188,7 +188,7 @@ export default function InvestmentTeaser() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleUnlock()}
-                      className="flex-1 border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
+                      className="flex-1 border border-[#e0ddd8] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#b1004d] focus:shadow-[0_0_0_3px_#f5e0e9] transition-all"
                     />
                   </div>
                   {validErr && <p className="text-red-500 text-xs">{validErr}</p>}
@@ -198,7 +198,7 @@ export default function InvestmentTeaser() {
                   <button
                     onClick={handleUnlock}
                     disabled={gate === "loading"}
-                    className="inline-flex justify-center items-center gap-2 bg-[#D6006C] text-white font-semibold text-[0.95rem] px-5 py-[13px] rounded-[10px] hover:bg-[#A80055] transition-all shadow-[0_4px_14px_rgba(214,0,108,0.25)] disabled:opacity-60"
+                    className="inline-flex justify-center items-center gap-2 bg-[#b1004d] text-white font-semibold text-[0.95rem] px-5 py-[13px] rounded-[10px] hover:bg-[#8c1642] transition-all shadow-[0_4px_14px_rgba(177,0,77,0.25)] disabled:opacity-60"
                   >
                     {gate === "loading" ? "Odesílám…" : "Odemknout propočet zdarma →"}
                   </button>

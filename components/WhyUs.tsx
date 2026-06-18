@@ -3,8 +3,8 @@ const PROOFS = [
     value: "50+",
     label: "partnerských institucí",
     description:
-      "Spolupracujeme s více než 50 bankami, pojišťovnami a investičními společnostmi. Od Allianz a ČSOB po NN a Generali.",
-    color: "#D6006C",
+      "11 bank, 22 pojišťoven, 24 investičních společností a 8 penzijních fondů. Díky tomu vám nenabídneme jednu možnost — nabídneme tu nejlepší.",
+    color: "#b1004d",
   },
   {
     value: "5 000+",
@@ -47,7 +47,7 @@ export default function WhyUs() {
 
         {/* Header */}
         <div className="mb-14 max-w-[560px]">
-          <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
+          <div className="text-[0.78rem] font-semibold text-[#b1004d] uppercase tracking-widest mb-3">
             Proč 4fin
           </div>
           <h2
@@ -94,7 +94,7 @@ export default function WhyUs() {
                 </p>
                 <div className="border-t border-white/10 pt-4">
                   <div className="font-semibold text-white text-[0.88rem]">{t.author}</div>
-                  <div className="text-[#D6006C] text-[0.8rem] font-medium mt-0.5">{t.topic}</div>
+                  <div className="text-[#b1004d] text-[0.8rem] font-medium mt-0.5">{t.topic}</div>
                 </div>
               </div>
             ))}

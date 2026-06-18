@@ -52,7 +52,7 @@ export default function RatesDashboard() {
     <section id="sazby" className="py-[88px] px-7 bg-white">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-11">
-          <div className="flex items-center gap-2 text-[0.78rem] font-semibold text-[#D6006C] mb-3">
+          <div className="flex items-center gap-2 text-[0.78rem] font-semibold text-[#b1004d] mb-3">
             <span className="relative inline-block w-[7px] h-[7px] rounded-full bg-[#0E9D63] live-dot-ring" />
             Aktualizováno automaticky
           </div>
@@ -68,14 +68,14 @@ export default function RatesDashboard() {
           </p>
         </div>
 
-        <div className="bg-white border border-[#E6E8EC] rounded-[14px] overflow-hidden shadow-[0_1px_2px_rgba(13,17,23,0.04)]">
+        <div className="bg-white border border-[#e0ddd8] rounded-[14px] overflow-hidden shadow-[0_1px_2px_rgba(13,17,23,0.04)]">
           {loading ? (
             <div className="p-12 text-center text-[#697586] text-sm">Načítám sazby…</div>
           ) : (
             <div className="overflow-x-auto">
               {/* Header */}
               <div
-                className="grid px-[22px] py-[14px] bg-[#F6F7F9] border-b border-[#E6E8EC] text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-[#697586]"
+                className="grid px-[22px] py-[14px] bg-[#f2f0ed] border-b border-[#e0ddd8] text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-[#697586]"
                 style={{ gridTemplateColumns: "1.4fr 1fr 1fr 1fr" }}
               >
                 <span>Banka</span>
@@ -92,8 +92,8 @@ export default function RatesDashboard() {
                 return (
                   <div
                     key={r.bank}
-                    className={`grid px-[22px] py-[15px] border-b border-[#E6E8EC] last:border-0 items-center text-[0.92rem] transition-colors hover:bg-[#F6F7F9] ${
-                      isBest ? "bg-[#FCE7F1]" : ""
+                    className={`grid px-[22px] py-[15px] border-b border-[#e0ddd8] last:border-0 items-center text-[0.92rem] transition-colors hover:bg-[#f2f0ed] ${
+                      isBest ? "bg-[#f5e0e9]" : ""
                     }`}
                     style={{ gridTemplateColumns: "1.4fr 1fr 1fr 1fr" }}
                   >
@@ -107,7 +107,7 @@ export default function RatesDashboard() {
                         {r.bank}
                       </span>
                       {isBest && (
-                        <span className="text-[0.62rem] font-bold bg-[#D6006C] text-white px-1.5 py-0.5 rounded-[5px]">
+                        <span className="text-[0.62rem] font-bold bg-[#b1004d] text-white px-1.5 py-0.5 rounded-[5px]">
                           NEJNIŽŠÍ
                         </span>
                       )}
@@ -120,7 +120,7 @@ export default function RatesDashboard() {
                         <div key={c.key} className={`text-right ${c.hide}`}>
                           <span
                             className={`font-display font-semibold tabular-nums ${
-                              isMin ? "text-[#D6006C]" : "text-[#0D1117]"
+                              isMin ? "text-[#b1004d]" : "text-[#0D1117]"
                             }`}
                           >
                             {r[c.key].toFixed(2).replace(".", ",")} %
@@ -135,7 +135,7 @@ export default function RatesDashboard() {
           )}
         </div>
 
-        <div className="mt-5 rounded-[12px] border border-[#E6E8EC] bg-[#F6F7F9] px-5 py-4 text-[0.82rem] text-[#3A424E] leading-relaxed">
+        <div className="mt-5 rounded-[12px] border border-[#e0ddd8] bg-[#f2f0ed] px-5 py-4 text-[0.82rem] text-[#3A424E] leading-relaxed">
           <span className="font-semibold text-[#0D1117]">Výsledná sazba a výše splátky závisí na mnoha věcech</span>
           {" — konkrétně na "}
           <Tip label="LTV" tip="Kolik procent z hodnoty nemovitosti si půjčujete. Čím méně, tím lepší sazba — banka podstupuje nižší riziko." />
@@ -162,7 +162,7 @@ export default function RatesDashboard() {
           {". Přesnou nabídku sestavíme individuálně — "}
           <a
             href="#kontakt"
-            className="font-semibold text-[#D6006C] border-b border-dashed border-[#D6006C] hover:opacity-75"
+            className="font-semibold text-[#b1004d] border-b border-dashed border-[#b1004d] hover:opacity-75"
           >
             na bezplatné konzultaci →
           </a>

@@ -58,19 +58,19 @@ function CountUp({ count, suffix }: { count: number; suffix: string }) {
 
 export default function StatsBand() {
   return (
-    <div className="border-t border-b border-[#E6E8EC] bg-[#F6F7F9]">
+    <div className="border-t border-b border-[#e0ddd8] bg-[#f2f0ed]">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {STATS.map((s, i) => {
             const borderR =
               i % 2 === 0
-                ? "border-r border-[#E6E8EC]"
+                ? "border-r border-[#e0ddd8]"
                 : i === 1
-                ? "md:border-r md:border-[#E6E8EC]"
+                ? "md:border-r md:border-[#e0ddd8]"
                 : i === 2
-                ? "border-r border-[#E6E8EC]"
+                ? "border-r border-[#e0ddd8]"
                 : "";
-            const borderB = i < 2 ? "border-b border-[#E6E8EC] md:border-b-0" : "";
+            const borderB = i < 2 ? "border-b border-[#e0ddd8] md:border-b-0" : "";
             return (
               <div key={s.label} className={`px-7 py-8 ${borderR} ${borderB}`}>
                 <CountUp count={s.count} suffix={s.suffix} />

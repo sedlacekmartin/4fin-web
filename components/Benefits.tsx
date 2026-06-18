@@ -7,8 +7,8 @@ const diffFmt = new Intl.NumberFormat("cs-CZ").format(diff);
 
 const ITEMS = [
   {
-    bg: "#FCE7F1",
-    color: "#A80055",
+    bg: "#f5e0e9",
+    color: "#8c1642",
     icon: "💸",
     stat: `${diffFmt} Kč`,
     label: "o tolik více zaplatíte v průměrné bance",
@@ -31,7 +31,7 @@ const ITEMS = [
     desc: "Přímo v bance dostanete jednu nabídku — od té banky. U nás vidíte celý trh a vyberete skutečně nejlepší.",
   },
   {
-    bg: "#F6F7F9",
+    bg: "#f2f0ed",
     color: "#3A424E",
     icon: "🛡",
     stat: "Hlídáme",
@@ -47,7 +47,7 @@ export default function Benefits() {
 
         {/* Header */}
         <div className="mb-12 max-w-[640px]">
-          <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
+          <div className="text-[0.78rem] font-semibold text-[#b1004d] uppercase tracking-widest mb-3">
             Proč s poradcem
           </div>
           <h2
@@ -56,7 +56,7 @@ export default function Benefits() {
           >
             Banka vám nabídne svou sazbu.<br />
             My vyjednáme{" "}
-            <span className="text-[#D6006C]">jinou.</span>
+            <span className="text-[#b1004d]">jinou.</span>
           </h2>
           <p className="text-[#3A424E] text-[1.05rem] leading-relaxed">
             Banka neví o nabídkách konkurence — a sdělovat vám je není v jejím zájmu.
@@ -69,7 +69,7 @@ export default function Benefits() {
           {ITEMS.map((item) => (
             <div
               key={item.stat}
-              className="rounded-[16px] border border-[#E6E8EC] p-6 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(13,17,23,0.07)] transition-all"
+              className="rounded-[16px] border border-[#e0ddd8] p-6 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(13,17,23,0.07)] transition-all"
             >
               <div
                 className="w-10 h-10 rounded-[10px] grid place-items-center text-[1.2rem] flex-shrink-0"
@@ -96,14 +96,14 @@ export default function Benefits() {
         </div>
 
         {/* Bottom CTA strip */}
-        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[14px] bg-[#F6F7F9] border border-[#E6E8EC] px-6 py-5">
+        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[14px] bg-[#f2f0ed] border border-[#e0ddd8] px-6 py-5">
           <p className="text-[0.95rem] text-[#3A424E] max-w-[52ch]">
             <strong className="text-[#0D1117]">Poradenství je pro vás zdarma.</strong>{" "}
             Odměnu dostáváme od bank za zprostředkování — ne od vás. Proto je náš zájem přirozeně totožný s vaším.
           </p>
           <a
             href="#kontakt"
-            className="flex-shrink-0 inline-flex items-center gap-2 bg-[#D6006C] text-white font-semibold text-[0.92rem] px-5 py-[11px] rounded-[10px] hover:bg-[#A80055] transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(214,0,108,0.22)] whitespace-nowrap"
+            className="flex-shrink-0 inline-flex items-center gap-2 bg-[#b1004d] text-white font-semibold text-[0.92rem] px-5 py-[11px] rounded-[10px] hover:bg-[#8c1642] transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(177,0,77,0.22)] whitespace-nowrap"
           >
             Chci bezplatnou konzultaci →
           </a>

@@ -109,7 +109,7 @@ export default function Hero() {
       <div className="relative flex flex-col justify-center overflow-hidden bg-[#0D1117] px-8 py-16 md:pl-[max(2.5rem,calc((100vw-1200px)/2+2.5rem))] md:pr-14">
 
         {/* Radial glow — pink */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_20%_60%,rgba(214,0,108,0.10)_0%,transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_20%_60%,rgba(177,0,77,0.10)_0%,transparent_70%)]" />
         {/* Radial glow — teal */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_20%,rgba(14,157,99,0.06)_0%,transparent_60%)]" />
         {/* Subtle dot grid */}
@@ -150,7 +150,7 @@ export default function Hero() {
               }}
             >
               {SLOGANS[sloganIdx].pre}
-              <span className="text-[#D6006C]">{SLOGANS[sloganIdx].accent}</span>
+              <span className="text-[#b1004d]">{SLOGANS[sloganIdx].accent}</span>
             </span>
           </h1>
 
@@ -160,7 +160,7 @@ export default function Hero() {
               Nejnižší dostupná sazba dnes
             </div>
             <div
-              className="font-display font-black tabular-nums leading-none text-[#D6006C]"
+              className="font-display font-black tabular-nums leading-none text-[#b1004d]"
               style={{ fontSize: "clamp(3rem, 4.5vw, 4rem)" }}
             >
               {displayRate.toFixed(2).replace(".", ",")} %
@@ -193,7 +193,7 @@ export default function Hero() {
           <div className="flex flex-wrap gap-3">
             <a
               href="#kontakt"
-              className="inline-flex items-center gap-2 rounded-[10px] bg-[#D6006C] px-[22px] py-[13px] text-[0.95rem] font-semibold text-white shadow-[0_4px_20px_rgba(214,0,108,0.45)] transition-all hover:-translate-y-0.5 hover:bg-[#A80055]"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-[#b1004d] px-[22px] py-[13px] text-[0.95rem] font-semibold text-white shadow-[0_4px_20px_rgba(177,0,77,0.45)] transition-all hover:-translate-y-0.5 hover:bg-[#8c1642]"
             >
               Chci nabídku na míru
             </a>
@@ -218,13 +218,13 @@ export default function Hero() {
 
       {/* ──────────── RIGHT PANEL ──────────── */}
       <div className="relative flex items-center justify-center overflow-hidden bg-[#0D1117] px-6 py-12 md:px-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_60%_50%,rgba(214,0,108,0.07)_0%,transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_60%_50%,rgba(177,0,77,0.07)_0%,transparent_70%)]" />
         <div
           id="kalkulacka"
           className="w-full max-w-[440px] overflow-hidden rounded-[20px] bg-white shadow-[0_8px_48px_rgba(13,17,23,0.11)]"
         >
           {/* Card header */}
-          <div className="flex items-center justify-between border-b border-[#E6E8EC] px-6 py-[18px]">
+          <div className="flex items-center justify-between border-b border-[#e0ddd8] px-6 py-[18px]">
             <span className="font-display font-semibold text-[1rem]">Orientační propočet hypotéky</span>
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#E3F4EC] px-2.5 py-1 text-[0.72rem] font-semibold text-[#0E9D63]">
               <span className="live-dot-ring relative inline-block h-[7px] w-[7px] rounded-full bg-[#0E9D63]" />
@@ -271,7 +271,7 @@ export default function Hero() {
                     className={`flex-1 rounded-lg border py-[9px] text-[0.84rem] font-semibold transition-all ${
                       fixKey === o.key
                         ? "border-[#0D1117] bg-[#0D1117] text-white"
-                        : "border-[#D9DCE1] bg-white text-[#697586] hover:bg-[#F6F7F9]"
+                        : "border-[#e0ddd8] bg-white text-[#697586] hover:bg-[#f2f0ed]"
                     }`}
                   >
                     {o.label}
@@ -281,7 +281,7 @@ export default function Hero() {
             </div>
 
             {/* Result box */}
-            <div className="rounded-xl bg-[#F6F7F9] p-[18px]">
+            <div className="rounded-xl bg-[#f2f0ed] p-[18px]">
               <div>
                 <div className="text-[0.8rem] text-[#697586]">Orientační měsíční splátka</div>
                 <div
@@ -293,7 +293,7 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className="mt-[14px] flex gap-6 border-t border-[#E6E8EC] pt-[14px]">
+              <div className="mt-[14px] flex gap-6 border-t border-[#e0ddd8] pt-[14px]">
                 <div>
                   <span className="block text-[0.72rem] text-[#697586]">Nejnižší sazba</span>
                   <strong className="font-display font-semibold tabular-nums text-[1.02rem]">
@@ -322,13 +322,13 @@ export default function Hero() {
                       <span className={`truncate ${isTop ? "font-semibold text-[#0D1117]" : "text-[#3A424E]"}`}>
                         {r.bank}
                       </span>
-                      <div className="h-2 overflow-hidden rounded-full bg-[#EEF0F3]">
+                      <div className="h-2 overflow-hidden rounded-full bg-[#e8e4de]">
                         <div
                           className="h-full rounded-full transition-all duration-500"
-                          style={{ width: `${w.toFixed(0)}%`, backgroundColor: isTop ? "#D6006C" : "#D9DCE1" }}
+                          style={{ width: `${w.toFixed(0)}%`, backgroundColor: isTop ? "#b1004d" : "#e0ddd8" }}
                         />
                       </div>
-                      <span className={`font-display font-semibold tabular-nums ${isTop ? "text-[#D6006C]" : "text-[#3A424E]"}`}>
+                      <span className={`font-display font-semibold tabular-nums ${isTop ? "text-[#b1004d]" : "text-[#3A424E]"}`}>
                         {r[fixKey].toFixed(2).replace(".", ",")}%
                       </span>
                     </div>

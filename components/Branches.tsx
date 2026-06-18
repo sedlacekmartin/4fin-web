@@ -31,10 +31,10 @@ const BRANCHES = [
 
 export default function Branches() {
   return (
-    <section id="pobocky" className="py-20 px-4 bg-[#F6F7F9]">
+    <section id="pobocky" className="py-20 px-4 bg-[#f2f0ed]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
-          <p className="text-[#D6006C] text-sm font-medium uppercase tracking-widest mb-2">
+          <p className="text-[#b1004d] text-sm font-medium uppercase tracking-widest mb-2">
             Pobočky
           </p>
           <h2 className="font-display text-4xl font-bold text-[#0D1117]">
@@ -48,14 +48,14 @@ export default function Branches() {
               key={b.city}
               className={`rounded-2xl p-6 ${
                 b.isHQ
-                  ? "bg-[#D6006C] text-white"
-                  : "bg-white border border-[#E6E8EC] text-[#0D1117]"
+                  ? "bg-[#b1004d] text-white"
+                  : "bg-white border border-[#e0ddd8] text-[#0D1117]"
               }`}
             >
               <div className="flex items-center gap-2 mb-4">
                 <div
                   className={`w-2 h-2 rounded-full ${
-                    b.isHQ ? "bg-white" : "bg-[#D6006C]"
+                    b.isHQ ? "bg-white" : "bg-[#b1004d]"
                   }`}
                 />
                 <span
@@ -83,7 +83,7 @@ export default function Branches() {
               <a
                 href={`tel:${b.phone.replace(/\s/g, "")}`}
                 className={`text-sm font-medium ${
-                  b.isHQ ? "text-white" : "text-[#D6006C]"
+                  b.isHQ ? "text-white" : "text-[#b1004d]"
                 }`}
               >
                 {b.phone}

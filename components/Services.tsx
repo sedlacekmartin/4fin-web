@@ -2,26 +2,50 @@ const SERVICES = [
   {
     id: "hypoteky",
     emoji: "🏠",
-    bg: "#FCE7F1",
+    bg: "#f5e0e9",
     title: "Hypotéky a bydlení",
-    desc: "Najdeme nejlevnější banku pro váš případ, vyřídíme papíry a u koupě či prodeje zapojíme vlastní realitní kancelář.",
-    cta: "Spočítat a získat nabídku →",
+    desc: "Srovnáme banky a vyjednáme nejlepší sazbu — ať kupujete, stavíte nebo refinancujete. Vlastní realitní kancelář zajistí i samotný převod nemovitosti.",
+    cta: "Chci srovnání hypoték →",
   },
   {
     id: "investice",
     emoji: "📈",
     bg: "#E3F4EC",
-    title: "Investice a rezervy",
-    desc: "Nastavíme spoření a investice podle vašich cílů a času. Žádné produkty 'na sílu' — jen to, co dává smysl pro vás.",
+    title: "Investice a spoření",
+    desc: "Nastavíme pravidelné investování a rezervy přesně podle vašich cílů a časového horizontu. Bez produktů 'na sílu' — jen to, co vám skutečně přinese výnos.",
     cta: "Probrat možnosti →",
   },
   {
     id: "pojisteni",
     emoji: "🛡️",
-    bg: "#F6F7F9",
-    title: "Pojištění",
-    desc: "Projdeme vaše smlouvy a řekneme rovnou, za co platíte zbytečně a kde naopak chybí krytí. Nezávisle.",
+    bg: "#f2f0ed",
+    title: "Pojištění a ochrana",
+    desc: "Projdeme vaše smlouvy a řekneme rovnou, za co platíte zbytečně a kde chybí krytí. Pojistíme příjem, majetek i odpovědnost — nezávisle.",
     cta: "Prověřit smlouvy →",
+  },
+  {
+    id: "penze",
+    emoji: "🎯",
+    bg: "#EEF2FF",
+    title: "Penze a budoucnost",
+    desc: "Čím dříve začnete, tím lépe. Nastavíme penzijní spoření, zabezpečení pro děti i dlouhodobý finanční plán — aby vás budoucnost nezaskočila.",
+    cta: "Naplánovat budoucnost →",
+  },
+  {
+    id: "uvery",
+    emoji: "💳",
+    bg: "#f2f0ed",
+    title: "Správa a refinancování úvěrů",
+    desc: "Máte více půjček nebo drahý úvěr? Pomůžeme s refinancováním, konsolidací a optimalizací splácení — někdy i malá změna sazby znamená velkou úsporu.",
+    cta: "Zanalyzovat úvěry →",
+  },
+  {
+    id: "plan",
+    emoji: "📋",
+    bg: "#f5e0e9",
+    title: "Finanční plán na míru",
+    desc: "Propojíme vaše příjmy, výdaje, cíle a životní situaci do jednoho přehledného plánu. Víte, kde stojíte a co dělat dál.",
+    cta: "Sestavit plán →",
   },
 ];
 
@@ -30,7 +54,7 @@ export default function Services() {
     <section id="sluzby" className="py-[88px] px-7 bg-white">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-11">
-          <div className="text-[0.78rem] font-semibold text-[#D6006C] uppercase tracking-widest mb-3">
+          <div className="text-[0.78rem] font-semibold text-[#b1004d] uppercase tracking-widest mb-3">
             S čím pomáháme
           </div>
           <h2
@@ -41,11 +65,11 @@ export default function Services() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-[18px]">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
           {SERVICES.map((s) => (
             <div
               key={s.id}
-              className="bg-white border border-[#E6E8EC] rounded-[14px] p-7 hover:-translate-y-1 hover:shadow-[0_4px_24px_rgba(13,17,23,0.07)] hover:border-[#D9DCE1] transition-all cursor-pointer"
+              className="bg-white border border-[#e0ddd8] rounded-[14px] p-7 hover:-translate-y-1 hover:shadow-[0_4px_24px_rgba(13,17,23,0.07)] hover:border-[#e0ddd8] transition-all cursor-pointer"
             >
               <div
                 className="w-11 h-11 rounded-[11px] grid place-items-center text-[1.3rem] mb-4"
@@ -55,7 +79,7 @@ export default function Services() {
               </div>
               <h3 className="font-display text-[1.22rem] font-semibold mb-2">{s.title}</h3>
               <p className="text-[#3A424E] text-[0.95rem] leading-relaxed mb-4">{s.desc}</p>
-              <span className="text-[0.9rem] font-semibold text-[#D6006C] inline-flex gap-1.5 transition-[gap] hover:gap-2.5">
+              <span className="text-[0.9rem] font-semibold text-[#b1004d] inline-flex gap-1.5 transition-[gap] hover:gap-2.5">
                 {s.cta}
               </span>
             </div>

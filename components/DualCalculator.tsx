@@ -83,10 +83,10 @@ export default function DualCalculator() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: "Měsíční splátka", val: fmtCzk(monthlyPayment) + " Kč", c: "#0D1117" },
-          { label: "Přeplatek na úrocích", val: fmtMil(totalPaid - loanAmount), c: "#D6006C" },
+          { label: "Přeplatek na úrocích", val: fmtMil(totalPaid - loanAmount), c: "#b1004d" },
           { label: breakEven !== null ? "Doplatit v roce" : "Bod zlomu", val: breakEven !== null ? breakEven.toFixed(1) + " let" : "Nedosaženo", c: "#0D1117" },
         ].map((k) => (
-          <div key={k.label} className="border border-[#E6E8EC] rounded-xl p-4">
+          <div key={k.label} className="border border-[#e0ddd8] rounded-xl p-4">
             <span className="text-[0.72rem] text-[#697586] block mb-1.5">{k.label}</span>
             <b className="font-display font-bold text-[1.6rem] leading-none" style={{ color: k.c }}>{k.val}</b>
           </div>
@@ -101,16 +101,16 @@ export default function DualCalculator() {
         </div>
       )}
       {diffVs20y <= 50 && loanTerm < 20 && (
-        <div className="bg-[#F6F7F9] text-[#697586] text-[0.79rem] px-3.5 py-2.5 rounded-[9px]">
+        <div className="bg-[#f2f0ed] text-[#697586] text-[0.79rem] px-3.5 py-2.5 rounded-[9px]">
           Při kratší splatnosti je splátka vyšší — rozdíl k investování vzniká u delších dob.
         </div>
       )}
 
       {/* SVG Chart */}
-      <div className="border border-[#E6E8EC] rounded-xl p-5 bg-white">
+      <div className="border border-[#e0ddd8] rounded-xl p-5 bg-white">
         <div className="flex gap-5 flex-wrap mb-2 text-[0.8rem] text-[#3A424E]">
           {[
-            { c: "#D6006C", l: "Zbývající dluh" },
+            { c: "#b1004d", l: "Zbývající dluh" },
             { c: "#0E9D63", l: "Hodnota investice" },
             { c: "#0D1117", l: "Bod doplacení" },
           ].map((lg) => (
@@ -150,7 +150,7 @@ export default function DualCalculator() {
             d={`${invArr.map((v, i) => `${i === 0 ? "M" : "L"} ${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(" ")} L ${X(loanTerm).toFixed(1)} ${(pad.t + ih).toFixed(1)} L ${pad.l} ${(pad.t + ih).toFixed(1)} Z`}
             fill="url(#dcIg)"
           />
-          <polyline points={ptsStr(debtArr)} fill="none" stroke="#D6006C" strokeWidth="2.6" />
+          <polyline points={ptsStr(debtArr)} fill="none" stroke="#b1004d" strokeWidth="2.6" />
           <polyline points={ptsStr(invArr)} fill="none" stroke="#0E9D63" strokeWidth="2.6" />
           {breakEven !== null && breakEven <= loanTerm && (
             <>
@@ -169,27 +169,27 @@ export default function DualCalculator() {
       {/* Sliders grid */}
       <div className="grid md:grid-cols-2 gap-5">
         <Slider label="Doba splácení" value={loanTerm} min={15} max={35} step={1}
-          display={`${loanTerm} let`} color="#D6006C" onChange={setLoanTerm} />
+          display={`${loanTerm} let`} color="#b1004d" onChange={setLoanTerm} />
         <Slider label="Měsíčně investuji" value={monthlyInvest} min={0} max={20_000} step={500}
           display={`${fmtCzk(monthlyInvest)} Kč`} color="#0E9D63" onChange={setMonthlyInvest} />
         <Slider label="Očekávaný výnos" value={returnRate} min={2} max={10} step={0.5}
           display={`${returnRate.toFixed(1).replace(".", ",")} % p.a.`} color="#0E9D63" onChange={setReturnRate} />
         <Slider label="Výše hypotéky" value={loanAmount} min={500_000} max={12_000_000} step={100_000}
           display={loanAmount >= 1_000_000 ? `${(loanAmount / 1_000_000).toFixed(1)} mil. Kč` : `${fmtCzk(loanAmount)} Kč`}
-          color="#D6006C" onChange={setLoanAmount} />
+          color="#b1004d" onChange={setLoanAmount} />
         <Slider label="Úroková sazba" value={loanRate} min={1} max={10} step={0.1}
-          display={`${loanRate.toFixed(2).replace(".", ",")} % p.a.`} color="#D6006C" onChange={setLoanRate} />
+          display={`${loanRate.toFixed(2).replace(".", ",")} % p.a.`} color="#b1004d" onChange={setLoanRate} />
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between items-center gap-4 flex-wrap pt-4 border-t border-[#E6E8EC]">
+      <div className="flex justify-between items-center gap-4 flex-wrap pt-4 border-t border-[#e0ddd8]">
         <p className="text-[0.75rem] text-[#697586] max-w-[50ch]">
           Modelový výpočet. Výnos investice není zaručen a kolísá, sazba se po fixaci mění.
           Ilustrace principu, ne investiční doporučení.
         </p>
         <a
           href="#kontakt"
-          className="inline-flex items-center gap-2 bg-[#D6006C] text-white font-semibold text-[0.95rem] px-5 py-[11px] rounded-[10px] hover:bg-[#A80055] transition-all shadow-[0_4px_14px_rgba(214,0,108,0.25)] whitespace-nowrap"
+          className="inline-flex items-center gap-2 bg-[#b1004d] text-white font-semibold text-[0.95rem] px-5 py-[11px] rounded-[10px] hover:bg-[#8c1642] transition-all shadow-[0_4px_14px_rgba(177,0,77,0.25)] whitespace-nowrap"
         >
           Nastavit s poradcem →
         </a>

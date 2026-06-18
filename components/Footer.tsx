@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-10 pb-10 border-b border-white/10">
           <div>
             <div className="font-display text-xl font-bold mb-3">
-              4fin <span className="text-[#D6006C]">·</span> Centrum Třebíč
+              4fin <span className="text-[#b1004d]">·</span> Centrum Třebíč
             </div>
             <address className="not-italic text-white/50 text-sm leading-relaxed">
               Kubišova 1230/51

@@ -50,7 +50,7 @@ export default function LeadForm() {
         >
           {/* Left: text + checks */}
           <div>
-            <div className="text-[0.78rem] font-semibold text-[#ff7ab8] uppercase tracking-widest mb-3">
+            <div className="text-[0.78rem] font-semibold text-[#c4005a] uppercase tracking-widest mb-3">
               Nezávazně a zdarma
             </div>
             <h2
@@ -108,7 +108,7 @@ export default function LeadForm() {
                       className={`border rounded-full px-3.5 py-2 text-[0.83rem] font-semibold transition-all ${
                         topic === t
                           ? "bg-[#0D1117] text-white border-[#0D1117]"
-                          : "bg-white text-[#697586] border-[#D9DCE1] hover:bg-[#F6F7F9]"
+                          : "bg-white text-[#697586] border-[#e0ddd8] hover:bg-[#f2f0ed]"
                       }`}
                     >
                       {t}
@@ -122,7 +122,7 @@ export default function LeadForm() {
                     placeholder="Jméno a příjmení"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
+                    className="w-full border border-[#e0ddd8] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#b1004d] focus:shadow-[0_0_0_3px_#f5e0e9] transition-all"
                   />
                   <input
                     type="tel"
@@ -130,14 +130,14 @@ export default function LeadForm() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                    className="w-full border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
+                    className="w-full border border-[#e0ddd8] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#b1004d] focus:shadow-[0_0_0_3px_#f5e0e9] transition-all"
                   />
                   <input
                     type="text"
                     placeholder="Co řešíte — koupě, refinancování, investice… (nepovinné)"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    className="w-full border border-[#D9DCE1] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#D6006C] focus:shadow-[0_0_0_3px_#FCE7F1] transition-all"
+                    className="w-full border border-[#e0ddd8] rounded-[10px] px-[14px] py-3 text-[0.96rem] bg-white focus:outline-none focus:border-[#b1004d] focus:shadow-[0_0_0_3px_#f5e0e9] transition-all"
                   />
 
                   {validErr && <p className="text-red-500 text-xs">{validErr}</p>}
@@ -150,7 +150,7 @@ export default function LeadForm() {
                   <button
                     onClick={handleSubmit}
                     disabled={state === "loading"}
-                    className="w-full flex justify-center bg-[#D6006C] text-white font-semibold py-[13px] rounded-[10px] hover:bg-[#A80055] transition-all hover:-translate-y-px shadow-[0_4px_14px_rgba(214,0,108,0.25)] disabled:opacity-60 mt-1"
+                    className="w-full flex justify-center bg-[#b1004d] text-white font-semibold py-[13px] rounded-[10px] hover:bg-[#8c1642] transition-all hover:-translate-y-px shadow-[0_4px_14px_rgba(177,0,77,0.25)] disabled:opacity-60 mt-1"
                   >
                     {state === "loading" ? "Odesílám…" : "Chci konzultaci zdarma →"}
                   </button>
