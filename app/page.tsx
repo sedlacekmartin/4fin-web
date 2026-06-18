@@ -9,6 +9,7 @@ import InvestmentTeaser from "@/components/InvestmentTeaser";
 import Services from "@/components/Services";
 import WhyUs from "@/components/WhyUs";
 import Team from "@/components/Team";
+import Gallery from "@/components/Gallery";
 import LeadForm from "@/components/LeadForm";
 import Branches from "@/components/Branches";
 import Footer from "@/components/Footer";
@@ -46,10 +47,13 @@ export default function Home() {
         {/* 9. Tým — lidský prvek */}
         <Team />
 
-        {/* 10. Konverze */}
+        {/* 10. Zázemí — důvěra přes fotky */}
+        <Gallery />
+
+        {/* 11. Konverze */}
         <LeadForm />
 
-        {/* 11. Kde nás najdete */}
+        {/* 12. Kde nás najdete */}
         <Branches />
       </main>
       <Footer />
