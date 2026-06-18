@@ -173,22 +173,6 @@ export default function Hero() {
             Nezávisle, bez poplatku, vždy s ohledem jen na vás.
           </p>
 
-          {/* Social proof strip */}
-          <div className="mb-8 flex gap-7 border-b border-white/10 pb-8">
-            {[
-              { n: "50+", label: "partnerských institucí" },
-              { n: "0 Kč", label: "za poradenství" },
-              { n: "100%", label: "na straně klienta" },
-            ].map(({ n, label }) => (
-              <div key={label}>
-                <div className="font-display font-black tabular-nums leading-none text-white" style={{ fontSize: "1.55rem" }}>
-                  {n}
-                </div>
-                <div className="mt-0.5 text-[0.71rem] leading-snug text-white/35">{label}</div>
-              </div>
-            ))}
-          </div>
-
           {/* CTAs */}
           <div className="flex flex-wrap gap-3">
             <a

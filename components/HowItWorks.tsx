@@ -43,11 +43,10 @@ export default function HowItWorks() {
             className="font-display font-bold tracking-[-0.03em] mb-3"
             style={{ fontSize: "clamp(1.9rem, 3.4vw, 2.7rem)" }}
           >
-            Jednoduché. Rychlé. Zdarma.
+            Jednoduché. Rychlé. A zdarma.
           </h2>
           <p className="text-[#3A424E] text-[1.05rem] leading-relaxed">
-            Od prvního kontaktu po podpis smlouvy — průměrně 2 týdny
-            a minimum vašeho času.
+            Od prvního kontaktu po podpis smlouvy. O všechno se postaráme za vás. Navíc za naše služby neplatíte. Podívejte se, jak to funguje.
           </p>
         </div>
 

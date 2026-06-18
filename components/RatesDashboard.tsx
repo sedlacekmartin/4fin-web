@@ -54,17 +54,16 @@ export default function RatesDashboard() {
         <div className="mb-11">
           <div className="flex items-center gap-2 text-[0.78rem] font-semibold text-[#b1004d] mb-3">
             <span className="relative inline-block w-[7px] h-[7px] rounded-full bg-[#0E9D63] live-dot-ring" />
-            Aktualizováno automaticky
+            Aktualizováno automaticky každý den.
           </div>
           <h2
             className="font-display font-bold tracking-[-0.03em] mb-3"
             style={{ fontSize: "clamp(1.9rem, 3.4vw, 2.7rem)" }}
           >
-            Sazby bank, přehledně a denně.
+            Sazby bank přehledně. Aktualizované každý den.
           </h2>
           <p className="text-[#3A424E] text-[1.06rem] max-w-[54ch]">
-            Stahujeme je z veřejných webů bank každé ráno. Jsou orientační —
-            vaši reálnou nabídku vyjednáme individuálně.
+            Orientační úrokové sazby. Díky silné vyjednávací pozici jsme pro vás schopni zajistit lepší podmínky.
           </p>
         </div>
 

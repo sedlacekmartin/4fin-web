@@ -122,12 +122,8 @@ export default function InvestmentTeaser() {
             className="font-display font-bold tracking-[-0.03em] mb-3"
             style={{ fontSize: "clamp(1.9rem, 3.4vw, 2.7rem)" }}
           >
-            Splaťte hypotéku dřív.
+            Předčasné splacení hypotéky
           </h2>
-          <p className="text-[#3A424E] text-[1.06rem] max-w-[54ch]">
-            Jeden z přístupů, které s klienty pravidelně řešíme: delší splatnost sníží
-            měsíční splátku — a ušetřený rozdíl investujete.
-          </p>
         </div>
 
         <div className="bg-white border border-[#e0ddd8] rounded-[18px] overflow-hidden shadow-[0_4px_24px_rgba(13,17,23,0.07)]">

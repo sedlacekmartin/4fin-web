@@ -54,9 +54,9 @@ export default function Benefits() {
             className="font-display font-bold tracking-[-0.03em] mb-4"
             style={{ fontSize: "clamp(1.9rem, 3.4vw, 2.7rem)" }}
           >
-            Banka vám nabídne svou sazbu.<br />
-            My vyjednáme{" "}
-            <span className="text-[#b1004d]">jinou.</span>
+            Banka vám nabídne úrokovou sazbu.<br />
+            Budeme vyjednávat{" "}
+            <span className="text-[#b1004d]">o nižší.</span>
           </h2>
           <p className="text-[#3A424E] text-[1.05rem] leading-relaxed">
             Banka neví o nabídkách konkurence — a sdělovat vám je není v jejím zájmu.
@@ -96,11 +96,15 @@ export default function Benefits() {
         </div>
 
         {/* Bottom CTA strip */}
-        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[14px] bg-[#f2f0ed] border border-[#e0ddd8] px-6 py-5">
-          <p className="text-[0.95rem] text-[#3A424E] max-w-[52ch]">
-            <strong className="text-[#0D1117]">Poradenství je pro vás zdarma.</strong>{" "}
-            Odměnu dostáváme od bank za zprostředkování — ne od vás. Proto je náš zájem přirozeně totožný s vaším.
-          </p>
+        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[14px] bg-[#f2f0ed] border border-[#e0ddd8] px-6 py-6">
+          <div>
+            <p className="font-display font-bold text-[#0D1117] text-[1.3rem] leading-snug mb-1">
+              Poradenství je pro vás zdarma.
+            </p>
+            <p className="text-[0.92rem] text-[#697586]">
+              Stačí se ozvat — bez závazku se ozveme zpátky a vše vysvětlíme.
+            </p>
+          </div>
           <a
             href="#kontakt"
             className="flex-shrink-0 inline-flex items-center gap-2 bg-[#b1004d] text-white font-semibold text-[0.92rem] px-5 py-[11px] rounded-[10px] hover:bg-[#8c1642] transition-all hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(177,0,77,0.22)] whitespace-nowrap"
